@@ -1,0 +1,80 @@
+version: "3.2"
+
+networks:
+  protect:
+    driver: bridge
+    attachable: true
+
+services:
+  dynamodb:
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "."]
+    container_name: protect-api-dynamodb
+    image: amazon/dynamodb-local
+    networks:
+      - protect
+    ports:
+      - "8000:8000"
+    restart: always
+    volumes:
+      - dynamodb-data:/home/dynamodblocal
+    working_dir: /home/dynamodblocal
+
+  mysql:
+    command:
+      [
+        "mysqld",
+        "--character-set-server=utf8",
+        "--collation-server=utf8_general_ci",
+      ]
+    container_name: protect-api-mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    image: mysql:5.6
+    networks:
+      - protect
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - "mysql-data:/var/lib/mysql"
+
+  magento:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: magento
+    depends_on:
+      - mysql
+    environment:
+      # This variable must match the mount location below in `volumes`
+      # and be a subdirectory of `/var/www/html` to make apache happy
+      MODULE_SRC: "/var/www/html/protect-integration-module"
+      MAGENTO_BASE_URL: "${MAGENTO_BASE_URL}"
+      PROTECT_API_URL: "${PROTECT_API_URL}"
+      PROTECT_CLIENT_URL: "${PROTECT_CLIENT_URL}"
+    networks:
+      - protect
+    sysctls:
+      # Needed for non-root APACHE_RUN_USER when binding to port 80
+      net.ipv4.ip_unprivileged_port_start: 0
+    volumes:
+      # Map the module source so that changes made on the host are seen inside the container
+      - "${NS8_SRC}/protect-integration-magento/module:/var/www/html/protect-integration-module"
+      # Map the .env file so that changes can take effect without recreating the container
+      - "${NS8_SRC}/protect-integration-magento/docker/.env:/etc/environment"
+
+  ngrok-magento:
+    container_name: ngrok-magento
+    depends_on:
+      - magento
+    environment:
+      NGROK_AUTH: "${NGROK_AUTH}"
+      NGROK_SUBDOMAIN: "${MAGENTO_NGROK_SUBDOMAIN}"
+      NGROK_PORT: "magento:80"
+    image: wernight/ngrok
+    networks:
+      - protect
+
+volumes:
+  mysql-data: {}
+  dynamodb-data: {}
