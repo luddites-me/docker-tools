@@ -59,9 +59,9 @@ services:
       net.ipv4.ip_unprivileged_port_start: 0
     volumes:
       # Map the module source so that changes made on the host are seen inside the container
-      - "${NS8_SRC}/protect-integration-magento/module:/var/www/html/protect-integration-module"
+      - "${NS8_SRC}/protect-integration-magento/:/var/www/html/protect-integration-module"
       # Map the .env file so that changes can take effect without recreating the container
-      - "${NS8_SRC}/protect-integration-magento/docker/.env:/etc/environment"
+      - "${NS8_SRC}/protect-tools-docker/magento/.env:/etc/environment"
 
   ngrok-magento:
     container_name: ngrok-magento
