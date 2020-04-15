@@ -17,6 +17,8 @@ bin/magento setup:install \
   --admin-email=dev@ns8demos.com \
   --admin-user=development \
   --admin-password=YzbLenbGRGN6fxqNsz.ti \
-  --base-url="${MAGENTO_BASE_URL}"
+  --base-url-secure="${MAGENTO_BASE_URL}" \
+  --use-secure=1 \
+  --use-secure-admin=1
 
 bin/magento cache:clean
