@@ -24,7 +24,12 @@ jq --arg pubkey "${MAGE_COMPOSER_REPO_PUBKEY}" \
   < auth.json.sample > auth.json
 
 # Install Protect SDK via composer & update config
-composer require ns8/protect-sdk
+declare -a REQUIRE_ARGS
+REQUIRE_ARGS=("ns8/protect-sdk")
+if [ "${INSTALL_DEV_PHP_SDK}" = "1" ]; then
+  REQUIRE_ARGS+=("dev-dev")
+fi
+composer require "${REQUIRE_ARGS[@]}"
 ./setup-update-config.sh
 
 # Link Magento module src to './app/code/NS8/Protect'
@@ -33,6 +38,11 @@ mkdir -p "$(dirname "${PROTECT_MODULE_DIR}")"
 ln -s "$(realpath "${MODULE_SRC}")" "${PROTECT_MODULE_DIR}"
 
 # Install Protect
-magento setup:upgrade
+if ! magento setup:upgrade; then
+  printf "\n\n *** magento setup:upgrade failed *** \n\n"
+  if [ "${INSTALL_DEV_PHP_SDK}" != "1" ]; then
+    exit 1
+  fi
+fi
 
 magento cache:clean
