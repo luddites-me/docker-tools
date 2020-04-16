@@ -1,6 +1,16 @@
 ARG PHP_VERSION=7.3
 FROM php:${PHP_VERSION}-apache
 
+ARG MAGENTO_VERSION=2.3.4
+
+ENV MAGEUSER=MAG005397149
+ENV MAGEPASS=2f7e27231024a6cbc3e075f5a74b8264e6badb56
+
+ENV MAGENTO_INSTALLER_DIR=/tmp
+
+RUN cd "${MAGENTO_INSTALLER_DIR}" && \
+  curl -O "https://${MAGEUSER}:${MAGEPASS}@www.magentocommerce.com/products/downloads/file/Magento-CE-${MAGENTO_VERSION}_sample_data.zip"
+
 # Install generally useful utilities
 RUN apt update -y && \
   apt install -y jq unzip
@@ -10,6 +20,9 @@ RUN apt install -y libicu-dev \
     zlib1g-dev libpng-dev libjpeg-dev libfreetype6-dev \
     libxslt1-dev \
     libzip-dev
+
+# Install cron to support Magento's cron jobs
+RUN apt install -y cron
 
 # Set the php.ini file for development
 RUN mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"
@@ -48,15 +61,8 @@ RUN chown www-data:www-data /var/www
 USER www-data
 WORKDIR /var/www/html
 
-ARG MAGENTO_VERSION=2.3.4
-
-ENV MAGEUSER=MAG005397149
-ENV MAGEPASS=2f7e27231024a6cbc3e075f5a74b8264e6badb56
-
-RUN cd /tmp && \
-  curl -O https://${MAGEUSER}:${MAGEPASS}@www.magentocommerce.com/products/downloads/file/Magento-CE-${MAGENTO_VERSION}_sample_data.zip && \
-  unzip -qq ./Magento-CE-${MAGENTO_VERSION}_sample_data.zip -d /var/www/html && \
-  rm ./Magento-CE-${MAGENTO_VERSION}_sample_data.zip
+RUN cd "${MAGENTO_INSTALLER_DIR}" && \
+  unzip -qq "./Magento-CE-${MAGENTO_VERSION}_sample_data.zip" -d /var/www/html
 
 # Set `composer` path
 ENV COMPOSER_HOME=/var/www/html/var/composer_home
