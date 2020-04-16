@@ -49,9 +49,6 @@ services:
       # This variable must match the mount location below in `volumes`
       # and be a subdirectory of `/var/www/html` to make apache happy
       MODULE_SRC: "/var/www/html/protect-integration-module"
-      MAGENTO_BASE_URL: "${MAGENTO_BASE_URL}"
-      PROTECT_API_URL: "${PROTECT_API_URL}"
-      PROTECT_CLIENT_URL: "${PROTECT_CLIENT_URL}"
     networks:
       - protect
     sysctls:
