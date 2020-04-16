@@ -32,4 +32,7 @@ if [ ! -e .protect-install-date ]; then
   date > .protect-install-date
 fi
 
+# Update config in case any environment variables have changed
+./setup-update-config.sh
+
 apache2-foreground
