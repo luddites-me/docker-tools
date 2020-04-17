@@ -3,7 +3,7 @@
 set -e
 
 if [ "${HOME}" != "/var/www" ]; then
-  echo "This script assumes it's run by 'www-data' with homedir '/var/www'"
+  echo "This script assumes it's run by 'www-data' with homedir '/var/www', not $(id)"
   exit 1
 fi
 
@@ -12,6 +12,7 @@ fi
 set -o allexport
 source /etc/environment
 
+cd "${HOME}"
 php ./try-connect-magento-db.php
 
 if [ ! -e .magento-db-create-date ] && [ "${SKIP_CREATE_MAGENTO_DB}" != "1" ]; then
@@ -35,4 +36,9 @@ fi
 # Update config in case any environment variables have changed
 ./setup-update-config.sh
 
+# Apache cannot open /dev/stdout when running under supervisord, so we
+# remove these links and just have it log to files.
+rm /var/log/apache2/*
+
+echo "Starting Apache ..."
 apache2-foreground

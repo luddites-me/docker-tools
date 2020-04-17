@@ -22,7 +22,7 @@ RUN apt install -y libicu-dev \
     libzip-dev
 
 # Install cron to support Magento's cron jobs
-RUN apt install -y cron
+RUN apt install -y cron supervisor
 
 # Set the php.ini file for development
 RUN mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"
@@ -59,7 +59,7 @@ ENV APACHE_RUN_GROUP=www-data
 # `/var/www` is the home directory for user `www-data`
 RUN chown www-data:www-data /var/www
 USER www-data
-WORKDIR /var/www/html
+WORKDIR /var/www
 
 RUN cd "${MAGENTO_INSTALLER_DIR}" && \
   unzip -qq "./Magento-CE-${MAGENTO_VERSION}_sample_data.zip" -d /var/www/html
@@ -78,4 +78,6 @@ COPY --chown=www-data:www-data \
   setup-update-config.sh \
   try-connect-magento-db.php ./
 
-CMD ["./setup-and-run.sh"]
+USER root
+COPY ./supervisord.conf .
+CMD ["/usr/bin/supervisord", "-c", "./supervisord.conf"]

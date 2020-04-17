@@ -2,9 +2,9 @@
 
 set -e
 
-chmod +x bin/magento
+BIN_MAGENTO=/var/www/html/bin/magento
 
-bin/magento setup:install \
+php "${BIN_MAGENTO}" setup:install \
   --language=en_US \
   --timezone=America/Los_Angeles \
   --db-host=mysql \
@@ -21,4 +21,4 @@ bin/magento setup:install \
   --use-secure=1 \
   --use-secure-admin=1
 
-bin/magento cache:clean
+php "${BIN_MAGENTO}" cache:clean

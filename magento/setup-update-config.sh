@@ -3,7 +3,7 @@
 set -e
 
 if [ "${HOME}" != "/var/www" ]; then
-  echo "This script assumes it's run by 'www-data' with homedir '/var/www'"
+  echo "This script assumes it's run by 'www-data' with homedir '/var/www', not $(id)"
   exit 1
 fi
 
