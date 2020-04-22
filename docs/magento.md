@@ -117,7 +117,8 @@ will fail (since the database already exists).
 ### Debugging
 
 To enable `Xdebug`, you need to define the `XDEBUG_CONFIG` environment variable.
-`Xdebug` needs to know the address of the docker host in order to connect
+`Xdebug` needs to know the address of the docker host in order to connect; if you're
+running on linux, you can get the IP with `docker network inspect`:
 
 ```bash
 cd "${NS8_SRC}/protect-tools-docker/magento"
@@ -128,6 +129,12 @@ DEBUG_IP=$(docker network inspect "${COMPOSE_PROJECT_NAME}_protect" \
 echo "XDEBUG_CONFIG=\"remote_enable=1 remote_host=${DEBUG_IP}\"" >> .env
 docker-compose up -d
 ```
+
+If you're running `docker desktop`, the IP address returned from `docker network
+inspect` above will be the address of the linux VM where docker's running, not
+the IP that the PHP debugger listens on.  In that case, it's easiest to just set
+the `XDEBUG_CONFIG="remote_enable=1 remote_host=<YOUR IP>"` value manually in
+your `.env` file.
 
 ### Getting a shell
 
