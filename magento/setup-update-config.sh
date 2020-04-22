@@ -20,7 +20,8 @@ pushd  ~/html/vendor/ns8/protect-sdk/assets/configuration
     --arg clientUrl "${PROTECT_CLIENT_URL}" \
     '.default_environment="development"
       | .logging.file += {
-          enabled: true
+          enabled: true,
+          log_level: "INFO"
         }
       | .development.urls += {
           api_url: $apiUrl,
