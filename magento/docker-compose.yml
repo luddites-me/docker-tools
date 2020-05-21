@@ -1,48 +1,10 @@
-version: "3.2"
-
-networks:
-  protect:
-    driver: bridge
-    attachable: true
+version: "3.7"
 
 services:
-  dynamodb:
-    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "."]
-    container_name: protect-api-dynamodb
-    image: amazon/dynamodb-local
-    networks:
-      - protect
-    ports:
-      - "8000:8000"
-    restart: always
-    volumes:
-      - dynamodb-data:/home/dynamodblocal
-    working_dir: /home/dynamodblocal
-
-  mysql:
-    command:
-      [
-        "mysqld",
-        "--character-set-server=utf8",
-        "--collation-server=utf8_general_ci",
-      ]
-    container_name: protect-api-mysql
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-    image: mysql:5.6
-    networks:
-      - protect
-    ports:
-      - "3306:3306"
-    restart: always
-    volumes:
-      - "mysql-data:/var/lib/mysql"
-
   magento:
     build:
-      dockerfile: Dockerfile
-      context: .
-    container_name: magento
+      dockerfile: ../Dockerfile
+      context: ./build-context
     depends_on:
       - mysql
     environment:
@@ -61,7 +23,6 @@ services:
       - "${NS8_SRC}/protect-tools-docker/magento/.env:/etc/environment"
 
   ngrok-magento:
-    container_name: ngrok-magento
     depends_on:
       - magento
     environment:
@@ -71,7 +32,3 @@ services:
     image: wernight/ngrok
     networks:
       - protect
-
-volumes:
-  mysql-data: {}
-  dynamodb-data: {}

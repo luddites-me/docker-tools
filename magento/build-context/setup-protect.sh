@@ -43,9 +43,16 @@ composer require "${REQUIRE_ARGS[@]}"
 # Link Magento module src to './app/code/NS8/Protect'
 PROTECT_MODULE_DIR="$(realpath ./app)/code/NS8/Protect"
 mkdir -p "$(dirname "${PROTECT_MODULE_DIR}")"
-ln -s "$(realpath "${MODULE_SRC}")" "${PROTECT_MODULE_DIR}"
+if [ ! -e "${PROTECT_MODULE_DIR}" ]; then
+  ln -s "$(realpath "${MODULE_SRC}")" "${PROTECT_MODULE_DIR}"
+else
+  if [ ! -h "${PROTECT_MODULE_DIR}" ]; then
+    echo "*** WARNING: '${PROTECT_MODULE_DIR}' exists but is not a symbolic link"
+  fi
+fi
 
 # Install Protect
+~/wait-for-protect.sh
 if ! magento setup:upgrade; then
   printf "\n\n *** magento setup:upgrade failed *** \n\n"
   if [ "${INSTALL_DEV_PHP_SDK}" != "1" ]; then

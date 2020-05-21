@@ -15,7 +15,7 @@ source /etc/environment
 cd "${HOME}"
 php ./try-connect-magento-db.php
 
-if [ ! -e .magento-db-create-date ] && [ "${SKIP_CREATE_MAGENTO_DB}" != "1" ]; then
+if [ ! -e .magento-db-create-date ]; then
   echo "Creating Magento database"
   php ./create-magento-db.php
   date > .magento-db-create-date

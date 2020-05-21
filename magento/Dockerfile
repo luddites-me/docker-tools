@@ -76,7 +76,8 @@ COPY --chown=www-data:www-data \
   setup-magento.sh \
   setup-protect.sh \
   setup-update-config.sh \
-  try-connect-magento-db.php ./
+  try-connect-magento-db.php \
+  wait-for-protect.sh ./
 
 USER root
 COPY ./supervisord.conf .
