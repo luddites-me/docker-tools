@@ -7,5 +7,6 @@ cd "${SCRIPTDIR}" || exit 1
 
 docker-compose \
   -f "./docker-compose.yml" \
+  -f "../protect-api/docker-compose.yml" \
   -f "../common/docker-compose.network.yml" \
   -f "../common/docker-compose.database.yml" "$@"

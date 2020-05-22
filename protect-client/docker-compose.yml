@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  protect-client:
+    build:
+      dockerfile: ../Dockerfile
+      context: ${NS8_SRC}/protect-tools-docker/protect-client/build-context
+    depends_on:
+      - protect-api
+    networks:
+      - protect
+    volumes:
+      - "~/.npmrc/:/home/node/.npmrc:ro"
+      - "${NS8_SRC}/ns8-protect-client:/home/node/ns8-protect-client"
+
+  ngrok-protect-client:
+    depends_on:
+      - protect-client
+    environment:
+      NGROK_AUTH: "${NGROK_AUTH}"
+      NGROK_SUBDOMAIN: "${PROTECT_CLIENT_SUBDOMAIN}"
+      NGROK_PORT: "protect-client:3000"
+      NGROK_HEADER: "localhost"
+    image: wernight/ngrok
+    networks:
+      - protect
+    ports:
+      - "40400:4040"

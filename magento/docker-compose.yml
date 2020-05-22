@@ -4,7 +4,7 @@ services:
   magento:
     build:
       dockerfile: ../Dockerfile
-      context: ./build-context
+      context: ${NS8_SRC}/protect-tools-docker/magento/build-context
     depends_on:
       - mysql
     environment:

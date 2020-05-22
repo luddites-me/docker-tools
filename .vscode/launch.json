@@ -27,6 +27,23 @@
         // Key must match the bind mapping in `magento/docker-compose.yml`
         "/var/www/html/protect-integration-module": "${env:NS8_SRC}/protect-integration-magento",
       }
+    },
+    {
+      // Note: This only works if you have NS8_SRC set in the environment before vs code is started,
+      //       e.g. `$ PROTECT_CLIENT_URL=<your client subdomain>.ngrok.io NS8_SRC=<your src dir> code`.
+      //       Also, if PROTECT_CLIENT_URL is not set, you can just change it in the address bar
+      "type": "chrome",
+      "request": "launch",
+      "name": "Protect Client: Launch Chrome",
+      "url": "${env:PROTECT_CLIENT_URL}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+          "webpack:///./*": "${webRoot}/*",
+          "webpack:///src/*": "${webRoot}/*",
+          "webpack:///*": "*",
+          "webpack:///./~/*": "${webRoot}/node_modules/*",
+          "/home/node/ns8-protect-client/*": "/__vscode-remote-uri__/${env:NS8_SRC}/ns8-protect-client/*"
+      }
     }
   ]
 }
