@@ -5,8 +5,6 @@ services:
     build:
       dockerfile: ../Dockerfile
       context: ${NS8_SRC}/protect-tools-docker/protect-client/build-context
-    depends_on:
-      - protect-api
     networks:
       - protect
     volumes:
