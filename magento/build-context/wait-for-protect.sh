@@ -20,7 +20,7 @@ curl --silent --output /dev/null \
   --connect-timeout 15 --retry 10 --retry-delay 10 \
   "${PROTECT_CLIENT_URL}"
 
-echo "Checking that protect api is up (${PROTECT_CLIENT_URL})"
+echo "Checking that protect api is up (${PROTECT_API_URL})"
 curl --silent --output /dev/null \
   --connect-timeout 15 --retry 10 --retry-delay 10 \
   "${PROTECT_API_URL}/protect/diagnostic"

@@ -26,12 +26,12 @@ $ get clone https://github.com/ns8inc/protect-sdk-switchboard
 
 If targeting `test`, there's no need to deploy the switchboard because requests will be sent by the protect API to the `ns8-switchboard-magento2-test` cloudformation stack. Otherwise, the switchboard must be deployed before the magento integration setup can complete successfully.
 
-Before setting up the switchboard, you need to decide your `DEV_SUFFIX`.  Pick a value < 15 characters, ending with `-dev`.  The value needs to be short because it's included in AWS resource names, and picking one that's too long will result in the names exceeding their max length. It also needs to end in `-dev` so that your IAM permissions grant appropriate access to the resources.
+Before setting up the switchboard, you need to decide your `DEV_SUFFIX`.  Pick a value < 11 characters, ending with `-dev`.  The value needs to be short because it's included in AWS resource names, and picking one that's too long will result in the names exceeding their max length. It also needs to end in `-dev` so that your IAM permissions grant appropriate access to the resources.
 
 ```bash
 $ cd $NS8_SRC/protect-switchboard-magento
-$ cp .env.schema .env
-$ # edit the `.env` file to set `DEV_SUFFIX`; e.g. with vs code:
+$ cp .env.defaults .env
+$ # edit the `.env` file to set `DEV_SUFFIX`, `NS8_CLIENT_URL`, and `NS8_PROTECT_URL`; e.g. with vs code:
 $ code .env
 $ yarn build 
 $ yarn deploy
