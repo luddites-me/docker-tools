@@ -31,7 +31,7 @@ Before setting up the switchboard, you need to decide your `DEV_SUFFIX`.  Pick a
 ```bash
 $ cd $NS8_SRC/protect-switchboard-magento
 $ cp .env.defaults .env
-$ # edit the `.env` file to set `DEV_SUFFIX`, `NS8_CLIENT_URL`, and `NS8_PROTECT_URL`; e.g. with vs code:
+$ # edit the `.env` file to set `DEV_SUFFIX`; e.g. with vs code:
 $ code .env
 $ yarn build 
 $ yarn deploy
