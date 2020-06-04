@@ -8,9 +8,9 @@ If you want to run the protect API *and* client in the stack, first [setup the `
 
 Before running any of this you need [the basic setup](./overview.md#setup).
 
-This container will run both the middleware and the webpack dev server for the client.  The endpoints for the `protect-api` are set in the `.env` file at `$NS8_SRC/ns8-protect-client/middleware/.env`, *just like when you're running it locally, outside of docker*.
+This container will run both the middleware and the webpack dev server for the client.  The endpoint for the `protect-api` is set in the `.env` file at `$NS8_SRC/ns8-protect-client/middleware/.env`, *just like when you're running it locally, outside of docker*.
 
-If you run just `docker-compose`, only the client service is started. To compose with `protect-api`, use `compose-all.sh`.
+If you run just `docker-compose`, only the client service is started. To compose with `protect-api` and `template-service`, use `compose-all.sh`.
 
 ### Getting the source
 
@@ -43,7 +43,7 @@ $ cd $NS8_SRC/protect-tools-docker/protect-client
 $ # Start all services/containers in the stack:
 $ ./compose-all.sh up -d
 # Follow the logs from the middleware and webpack dev server:
-$ ./compose-all.sh log -f protect-client
+$ ./compose-all.sh logs -f protect-client
 ```
 
 The `ngrok` UI for `protect-client` is available at https://localhost:40400.

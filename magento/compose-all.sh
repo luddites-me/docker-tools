@@ -10,4 +10,5 @@ docker-compose \
   -f "../common/docker-compose.network.yml" \
   -f "../common/docker-compose.database.yml" \
   -f "../protect-api/docker-compose.yml" \
-  -f "../protect-client/docker-compose.yml" "$@"
+  -f "../protect-client/docker-compose.yml" \
+  -f "../template-service/docker-compose.yml" "$@"

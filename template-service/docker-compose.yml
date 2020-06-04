@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  template-service:
+    build:
+      dockerfile: ../Dockerfile
+      context: ${NS8_SRC}/protect-tools-docker/template-service/build-context
+    environment:
+      PROXY_BASE: "https://${TEMPLATE_SERVICE_SUBDOMAIN}.ngrok.io/proxy"
+    networks:
+      - protect
+    volumes:
+      - "~/.npmrc/:/home/node/.npmrc:ro"
+      - "${NS8_SRC}/ns8-template-service:/home/node/ns8-template-service"
+
+  ngrok-template-service:
+    depends_on:
+      - template-service
+    environment:
+      NGROK_AUTH: "${NGROK_AUTH}"
+      NGROK_SUBDOMAIN: "${TEMPLATE_SERVICE_SUBDOMAIN}"
+      NGROK_PORT: "template-service:4040"
+      NGROK_HEADER: "localhost"
+    image: wernight/ngrok
+    networks:
+      - protect
+    ports:
+      - "40402:4040"

@@ -51,8 +51,8 @@ $ code .env
  2. URLs
    - `MAGENTO_NGROK_SUBDOMAIN`: The subdomain used used by ngrok to make Magento accessible (you may want to [reserve](./overview.md#ngrok) ahead of time).
    - `MAGENTO_BASE_URL`: The URL set as the base URL for Magento (keep default)
-   - `PROTECT_API_URL`: The URL of the protect API. If targeting the `test` instance, set to `https://test-protect.ns8.com`; if running as part of the stack copy the values (including the subdomain) from `protect-client/.env`
-   - `PROTECT_CLIENT_URL`: The URL of the protect client. If targeting the `test` instance, set to `https://test-protect-client.ns8.com`; if running as part of the stack copy the values (including the subdomain) from `protect-client/.env`
+   - `PROTECT_API_URL`: The URL of the protect API. If targeting the `test` instance, set to `https://test-protect.ns8.com`; if running with `compose-all.sh` set to `https://{PROTECT_API_SUBDOMAIN}.ngrok.io`.
+   - `PROTECT_CLIENT_URL`: The URL of the protect client. If targeting the `test` instance, set to `https://test-protect-client.ns8.com`;  if running with `compose-all.sh` set to `https://{PROTECT_CLIENT_SUBDOMAIN}.ngrok.io`.
  3. `INSTALL_DEV_PHP_SDK`: set this to `1` to have the setup script install the `dev-dev` version of the PHP sdk instead of the version referenced in `composer.json`. You can also do this manually after-the-fact in a shell for the `magento` service
  4. Composed project variables
 
@@ -76,7 +76,7 @@ $ cd $NS8_SRC/protect-tools-docker/magento
 $ ./compose-mage-alone.sh up
 ```
 
-Otherwise to start the stack with local protect API and client:
+Otherwise to start the stack with local `protect-api`, `protect-client` and `template-service`:
 
 ```bash
 $ cd $NS8_SRC/protect-tools-docker/magento
@@ -96,7 +96,7 @@ $ cd $NS8_SRC/protect-tools-docker/magento
 $ # Start all services/containers in the stack:
 $ ./compose-all.sh up -d
 $ # Follow the logs from magento (not really useful except during setup):
-$ ./compose-all.sh log -f magento
+$ ./compose-all.sh logs -f magento
 $ # Start shell as `www-data` inside the container:
 $ ./compose-all.sh exec magento /bin/bash
 $ # Start shell as `root` inside the container:

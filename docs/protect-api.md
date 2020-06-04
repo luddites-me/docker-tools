@@ -30,6 +30,7 @@ $ code .env
  2. URLs
    - `PROTECT_API_SUBDOMAIN`: The subdomain used used by ngrok to make the protect api accessible (you may want to [reserve](./overview.md#ngrok) ahead of time).
  3. `APP_ENV`: must be set to `dev`
+ 4. `NO_DEBUG`: if non-empty, the start script runs the compiled output without nodemon, ts-node or debugging enabled.  The main reason for this is to work around an issue with `shopify-api-node` when running with `ts-node`.
 
 ### configuration
 
@@ -48,7 +49,7 @@ $ cd $NS8_SRC/protect-tools-docker/protect-api
 $ # Start all services/containers in the stack:
 $ ./compose.sh up -d
 # Follow the logs from the protect API:
-$ ./compose.sh log -f protect-api
+$ ./compose.sh logs -f protect-api
 ```
 
 The `ngrok` UI for `protect-api` is available at https://localhost:40401.
