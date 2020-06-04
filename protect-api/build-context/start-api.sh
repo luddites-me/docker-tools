@@ -16,12 +16,17 @@ if [ -d node_modules ]; then
   echo "WARNING: if you see 'Error: '<YOUR_PLATFORM>' binaries cannot be used on the 'linuxmusl-x64' platform'"
   echo "WARNING: then 'rm -rf node_modules' and restart the container"
 fi
-yarn install --frozen-lockfile
+yarn install
 
 if [ ! -e "./config/${APP_ENV}.yml" ]; then
   echo "WARNING: 'APP_ENV' has no corresponding config file './config/${APP_ENV}.yml'"
 fi
 
-START_CMD="node --inspect=0.0.0.0:9229 -r ts-node/register -r dotenv/config src/main.ts"
-yarn nodemon -V -e ts -w src -x "${START_CMD}" \
-  | npx pino-pretty --colorize --translateTime
+if [ -n "${NO_DEBUG}" ]; then
+  yarn build && node -r dotenv/config dist/main.js \
+    | npx pino-pretty --colorize --translateTime
+else
+  START_CMD="node --inspect=0.0.0.0:9229 -r ts-node/register -r dotenv/config src/main.ts"
+  yarn nodemon -V -e ts -w src -x "${START_CMD}" \
+    | npx pino-pretty --colorize --translateTime
+fi

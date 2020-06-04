@@ -14,6 +14,8 @@ services:
       DYNAMODB_ENDPOINT_URL: "http://dynamodb:8000"
       # ns8-protect-api expected env vars
       APP_ENV: ${APP_ENV}
+      # start with or without nodemon and debugger
+      NO_DEBUG: ${NO_DEBUG}
     networks:
       - protect
     ports:
