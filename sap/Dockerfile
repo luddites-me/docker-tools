@@ -4,17 +4,11 @@ RUN mkdir /hybris
 WORKDIR /hybris
 
 RUN apt-get update
+RUN apt-get install -y wget unzip openjdk-11-jre
 
-RUN apt-get install -y wget
-
-RUN wget -nv https://static.saturn.ahicks.dev/hybris.zip
-
-# todo move this up to the wget apt-get
-RUN apt-get install unzip
-
+RUN wget -nv http://host.docker.internal:8085/hybris.zip
 RUN unzip hybris.zip
-
-RUN apt-get install -y openjdk-11-jre
+RUN rm hybris.zip
 
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 

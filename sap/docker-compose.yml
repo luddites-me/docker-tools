@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  sap:
+    image: 244249143763.dkr.ecr.us-west-2.amazonaws.com/protect-integration-hybris-dev-ah
+    ports:
+      - 9002:9002
+    networks:
+      - protect
+    volumes:
+      # Map local.properties
+      - "${NS8_SRC}/protect-tools-docker/sap/local.properties:/hybris/hybris/config/local.properties"
