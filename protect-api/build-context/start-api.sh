@@ -7,7 +7,10 @@ if [ "$(pwd)" != "/home/node" ]; then
   exit 1
 fi
 
-./create-dynamodb-tables.sh
+if ! ./create-dynamodb-tables.sh; then
+  echo "ERROR: error creating dynamodb tables"
+  exit 1
+fi
 
 cd ./ns8-protect-api
 # Install dependencies
