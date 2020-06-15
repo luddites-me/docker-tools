@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   sap:
-    image: 244249143763.dkr.ecr.us-west-2.amazonaws.com/protect-integration-hybris-dev-ah
+    image: 244249143763.dkr.ecr.us-west-2.amazonaws.com/protect-integration-hybris
     ports:
       - 9002:9002
     networks:

@@ -4,12 +4,13 @@ set -e
 
 S3_ARTIFACT_BUCKET="protect-docker-artifacts"
 S3_HYBRIS_URL="s3://$S3_ARTIFACT_BUCKET/hybris.zip"
-S3_CONNECTOR_URL="s3://$S3_ARTIFACT_BUCKET/hybris-connector.zip"
 
-IMAGE_NAME="244249143763.dkr.ecr.us-west-2.amazonaws.com/protect-integration-hybris-dev-ah"
+IMAGE_PREFIX="244249143763.dkr.ecr.us-west-2.amazonaws.com"
+BUILDER_IMAGE="$IMAGE_PREFIX/protect-integration-hybris-builder"
+RUNNER_IMAGE="$IMAGE_PREFIX/protect-integration-hybris-runner"
 
 if ! [ -x "$(command -v aws)" ]; then
-  echo 'Error: aws-cli is not installed.' >&2
+  echo "Error: aws-cli is not installed." >&2
   exit 1
 fi
 
@@ -18,14 +19,27 @@ echo "Checking AWS credentials..."
 aws s3 ls "s3://$S3_ARTIFACT_BUCKET" > /dev/null
 
 signedHybrisUrl=$(aws s3 presign $S3_HYBRIS_URL)
-signedConnectorUrl=$(aws s3 presign $S3_CONNECTOR_URL)
 
-echo "Warning: this will take >40 minutes to build!"
+echo "Warning: this will take a long time to build!"
+# sleep 3
 
-sleep 3
+TARGET="$1"
 
-docker build --build-arg "HYBRIS_URL=$signedHybrisUrl" --build-arg "CONNECTOR_URL=$signedConnectorUrl" -t hybris -t "$IMAGE_NAME" .
-
-docker tag hybris "$IMAGE_NAME"
-
-kill $!
+if [ "$TARGET" = "builder" ]; then
+  docker build \
+    --build-arg "HYBRIS_URL=$signedHybrisUrl" \
+    -t hybris-builder \
+    -t "$BUILDER_IMAGE" \
+    -f builder.Dockerfile \
+    .
+elif [ "$TARGET" = "runner" ]; then
+  docker build \
+    --build-arg "BUILDER_IMAGE=$BUILDER_IMAGE" \
+    -t hybris-runner \
+    -t "$RUNNER_IMAGE" \
+    -f runner.Dockerfile \
+    .
+else
+  echo "Usage: ./build.sh <builder | runner>"
+  exit 1
+fi
