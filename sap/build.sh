@@ -18,8 +18,6 @@ echo "Checking AWS credentials..."
 # this will throw if auth is invalid (usually MFA)
 aws s3 ls "s3://$S3_ARTIFACT_BUCKET" > /dev/null
 
-signedHybrisUrl=$(aws s3 presign $S3_HYBRIS_URL)
-
 echo "Warning: this will take a long time to build!"
 # sleep 3
 
@@ -27,7 +25,10 @@ TARGET="$1"
 
 if [ "$TARGET" = "builder" ]; then
   docker build \
-    --build-arg "HYBRIS_URL=$signedHybrisUrl" \
+    --build-arg "S3_HYBRIS_URL=$S3_HYBRIS_URL" \
+    --build-arg "AWS_ACCESS_KEY_ID" \
+    --build-arg "AWS_SECRET_ACCESS_KEY" \
+    --build-arg "AWS_SESSION_TOKEN" \
     -t hybris-builder \
     -t "$BUILDER_IMAGE" \
     -f builder.Dockerfile \

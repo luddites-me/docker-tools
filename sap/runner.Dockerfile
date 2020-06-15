@@ -4,8 +4,6 @@ FROM ${BUILDER_IMAGE}
 
 WORKDIR /hybris-connector
 
-RUN apt-get update
-
 COPY ./get-integration-artifact.sh .
 RUN bash ./get-integration-artifact.sh hybris-connector.zip
 RUN unzip -q hybris-connector.zip
