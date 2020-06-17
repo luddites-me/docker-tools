@@ -9,21 +9,25 @@ IMAGE_PREFIX="244249143763.dkr.ecr.us-west-2.amazonaws.com"
 BUILDER_IMAGE="$IMAGE_PREFIX/protect-integration-hybris-builder"
 RUNNER_IMAGE="$IMAGE_PREFIX/protect-integration-hybris-runner"
 
-if ! [ -x "$(command -v aws)" ]; then
-  echo "Error: aws-cli is not installed." >&2
-  exit 1
-fi
+function check_aws() {
+  if ! [ -x "$(command -v aws)" ]; then
+    echo "Error: aws-cli is not installed." >&2
+    exit 1
+  fi
 
-echo "Checking AWS credentials..."
-# this will throw if auth is invalid (usually MFA)
-aws s3 ls "s3://$S3_ARTIFACT_BUCKET" > /dev/null
+  echo "Checking AWS credentials..."
+  # this will throw if auth is invalid (usually MFA)
+  aws s3 ls "s3://$S3_ARTIFACT_BUCKET" > /dev/null
+}
 
 echo "Warning: this will take a long time to build!"
-# sleep 3
 
 TARGET="$1"
 
 if [ "$TARGET" = "builder" ]; then
+  # only need AWS / S3 for the builder image
+  check_aws
+
   docker build \
     --build-arg "S3_HYBRIS_URL=$S3_HYBRIS_URL" \
     --build-arg "AWS_ACCESS_KEY_ID" \
