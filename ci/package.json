@@ -1,0 +1,32 @@
+{
+  "author": "ns8inc",
+  "dependencies": {
+    "cli": "^1.0.1",
+    "dockerfile-template": "^0.2.0",
+    "object-keys-normalizer": "^1.0.1"
+  },
+  "description": "Tools for building Docker images to be used for CI/automated testing",
+  "homepage": "https://github.com/ns8inc/protect-tools-docker#readme",
+  "license": "UNLICENSED",
+  "name": "@ns8/protect-tools-docker",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ns8inc/protect-tools-docker.git"
+  },
+  "scripts": {
+    "build:ns8-magento": "node ./ns8-magento/build",
+    "build:ns8-php": "node ./ns8-php/build"
+  },
+  "scriptsDocumentation": {
+    "build:ns8-magento": {
+      "description": "Builds a Magento Docker image from the template.",
+      "dev": false
+    },
+    "build:ns8-php": {
+      "description": "Builds a PHP Docker image from the template.",
+      "dev": false
+    }
+  },
+  "version": "0.0.0"
+}
