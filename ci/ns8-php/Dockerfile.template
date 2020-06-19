@@ -3,7 +3,7 @@ FROM php:%%PHP_VERSION%%-cli
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y git jq python unzip wget yarnpkg zip && \
+    apt-get install -y awscli git jq unzip wget yarnpkg zip && \
     ln -s /usr/bin/yarnpkg /usr/local/bin/yarn
 
 RUN pecl install xdebug && \
