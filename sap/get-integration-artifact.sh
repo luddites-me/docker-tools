@@ -16,4 +16,4 @@ if [ "$RELEASE_URL" = "null" ]; then
   exit 1
 fi
 
-wget -O "$OUTPUT_FILE" -nv "$RELEASE_URL"
+curl -s "$RELEASE_URL" > "$OUTPUT_FILE"
