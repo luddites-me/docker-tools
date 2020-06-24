@@ -1,0 +1,14 @@
+{
+  "name": "protect-tools-docker",
+  "version": "1.0.0",
+  "description": "Tools to run protect in a docker compose stack",
+  "repository": "https://github.com/ns8inc/protect-tools-docker.git",
+  "author": "ns8inc",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "cross-spawn": "^7.0.3",
+    "dotenv-expand": "^5.1.0",
+    "dotenv-extended": "^2.8.0"
+  }
+}

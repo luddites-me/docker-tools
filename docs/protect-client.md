@@ -2,15 +2,13 @@
 
 The `protect-client` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [Protect client](https://github.com/ns8inc/ns8-protect-client).
 
-If you want to run the protect API *and* client in the stack, first [setup the `protect-api` stack](./protect-api.md).
-
 ## Setup
 
 Before running any of this you need [the basic setup](./overview.md#setup).
 
-This container will run both the middleware and the webpack dev server for the client.  The endpoint for the `protect-api` is set in the `.env` file at `$NS8_SRC/ns8-protect-client/middleware/.env`, *just like when you're running it locally, outside of docker*.
+This container will run both the middleware and the webpack dev server for the client.  
 
-If you run just `docker-compose`, only the client service is started. To compose with `protect-api` and `template-service`, use `compose-all.sh`.
+If `PROTECT_API_URL` is defined (as it is automatically when composing with `protect-api`), the [`start-client` script](../protect-client/build-context/start-client.sh) will set `V2_API_BASE` appropriately before starting the middleware.
 
 ### Getting the source
 
@@ -19,18 +17,17 @@ $ cd $NS8_SRC
 $ git clone https://github.com/ns8inc/ns8-protect-client
 ```
 
-### Environment Vars
+### Configuration
 
-```bash
-$ cd $NS8_SRC/protect-tools-docker/protect-client
-$ cp .env.defaults .env
-$ # edit the `.env` file to set the environment variables; e.g. with vs code:
-$ code .env
-```
+See [Composing Services](./overview.md#Composing Services) for a general overview of how to configure the protect-client service. The values in `.env.defaults` cover everything needed to get started, so nothing needs to be set in the common case.
 
  1. [General Variables](./overview.md#Environment)
- 2. URLs
-   - `PROTECT_CLIENT_SUBDOMAIN`: The subdomain used used by ngrok to make the protect client accessible (you may want to [reserve](./overview.md#ngrok) ahead of time).
+ 2. `PROTECT_CLIENT_SUBDOMAIN`
+  - default: ${NGROK_SUBDOMAIN_PREFIX}-protect
+  - the subdomain used used by ngrok to make the protect client accessible (you may want to [reserve](./overview.md#ngrok) ahead of time)
+ 3. `PROTECT_CLIENT_URL`
+  - default: https://${PROTECT_CLIENT_SUBDOMAIN}.ngrok.io/
+  - this may be referenced by other services when they're composed with `protect-client`.
 
 ## Development
 
@@ -39,7 +36,7 @@ $ code .env
 The main service is `protect-client`:
 
 ```bash
-$ cd $NS8_SRC/protect-tools-docker/protect-client
+$ cd $NS8_SRC/protect-tools-docker
 $ # Start all services/containers in the stack:
 $ ./compose-all.sh up -d
 # Follow the logs from the middleware and webpack dev server:

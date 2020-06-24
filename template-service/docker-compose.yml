@@ -6,6 +6,7 @@ services:
       dockerfile: ../Dockerfile
       context: ${NS8_SRC}/protect-tools-docker/template-service/build-context
     environment:
+      PROTECT_API_URL: ${PROTECT_API_URL}
       PROXY_BASE: "https://${TEMPLATE_SERVICE_SUBDOMAIN}.ngrok.io/proxy"
     networks:
       - protect

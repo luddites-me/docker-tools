@@ -2,17 +2,15 @@
 
 The `template-service` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [tempalte service](https://github.com/ns8inc/ns8-template-service).
 
-Running the `template-service` alone is not very useful; you probably want to run it with the protect client and API using `protect-client/compose-all.sh`.
-
 ## Setup
 
 Before running any of this you need [the basic setup](./overview.md#setup).
 
 Also see the [template service overview](https://ns8.slab.com/posts/template-service-wvw7lxi8).
 
-The endpoint for the `protect-api` is set in the `.env` file at `$NS8_SRC/ns8-template-service/.env`, *just like when you're running it locally, outside of docker*. The value should match what you set for `V2_API_BASE` in `$NS8_SRC/ns8-protect-client/middleware/.env` (see `$NS8_SRC/ns8-template-service/src/app/config.ts` for details).
+If `PROTECT_API_URL` is defined (as it is automatically when composing with `protect-api`), the [`tart-template-service` script](../template-service/build-context/start-template-service.sh) will set `V2_API_BASE` appropriately before starting the service.
 
-To make the `protect-api` target the `template-service` from this stack, you need to set `ns8TemplateHostUrl` in `$NS8_SRC/ns8-protect-api/config/${APP_ENV}.yml` to `!url https://${TEMPLATE_SERVICE_SUBDOMAIN}.ngrok.io/` (substituting in the variable *value*, e.g. `!url https://ns8-firstname-lastname-template-service.ngrok.io/`).
+Whten this service is composed with `protect-api`, it will define `TEMPLATE_SERVICE_URL` and `protect-api` will use that value for `ns8TemplateHostUrl` by default.
 
 ### Getting the source
 
@@ -21,19 +19,17 @@ $ cd $NS8_SRC
 $ git clone https://github.com/ns8inc/ns8-template-service
 ```
 
-### Environment Vars
+### Configuration
 
-```bash
-$ cd $NS8_SRC/protect-tools-docker/template-service
-$ cp .env.defaults .env
-$ # edit the `.env` file to set the environment variables; e.g. with vs code:
-$ code .env
-```
+See [Composing Services](./overview.md#Composing Services) for a general overview of how to configure the protect-client service. The values in `.env.defaults` cover everything needed to get started, so nothing needs to be set in the common case.
 
  1. [General Variables](./overview.md#Environment)
- 2. URLs
-   - `TEMPLATE_SERVICE_SUBDOMAIN`: The subdomain used used by ngrok to make the template service accessible (you may want to [reserve](./overview.md#ngrok) ahead of time).
-   - `PROTECT_API_SUBDOMAIN`
+ 2. `TEMPLATE_SERVICE_SUBDOMAIN`
+  - default: ${NGROK_SUBDOMAIN_PREFIX}-template-service
+  - the subdomain used used by ngrok to make the template service accessible (you may want to [reserve](./overview.md#ngrok) ahead of time)
+ 3. `TEMPLATE_SERVICE_URL`
+  - default: https://${TEMPLATE_SERVICE_SUBDOMAIN}.ngrok.io/
+  - this may be referenced by other services when they're composed with `template-service`.
 
 ## Development
 
@@ -42,7 +38,7 @@ $ code .env
 The main service is `template-service`:
 
 ```bash
-$ cd $NS8_SRC/protect-tools-docker/template-service
+$ cd $NS8_SRC/protect-tools-docker
 $ # Start all services/containers in the stack:
 $ ./compose.sh up -d
 # Follow the logs from the template-service:

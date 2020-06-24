@@ -1,0 +1,16 @@
+version: "3.7"
+
+services:
+  dynamodb:
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "."]
+    image: amazon/dynamodb-local
+    networks:
+      - protect
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb-data:/home/dynamodblocal
+    working_dir: /home/dynamodblocal
+
+volumes:
+  dynamodb-data: {}

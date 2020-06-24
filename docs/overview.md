@@ -1,9 +1,7 @@
 
 # Protect Docker Tools Overview
 
-This repo contains [Docker Compose](https://docs.docker.com/compose/) stacks for various parts of the NS8 Protect stack. Depending on what you're working on, different stacks can be composed together by passing the `docker-compose.yml` file for the components you want to run to `docker-compose`. For common combinations (e.g., `protect-client` along with `protect-api`), stacks in this repo should include `./compose[-parts].sh` scripts for convenience.
-
-Configuration for the stacks is generally done with `.env` files.  When composing stacks, the `.env` file must contain all variables for all parts of the stack being composed.
+This repo contains [Docker Compose](https://docs.docker.com/compose/) stacks for various parts of the NS8 Protect stack.
 
 ## Setup
 
@@ -26,12 +24,6 @@ $ git clone https://github.com/ns8inc/protect-tools-docker
 
 The above command will clone the repo into `protect-tools-docker`; it has to be cloned into that exact directory, as do all the other repos referenced by these scripts, or they won't work.
 
-### Overrides
-
-Overrides to the docker-compose.yaml can be configured in a non tracked file `docker-compose.override.yaml`. This will get picked up automatically along with the default `docker-compose.yaml`. It can be used for mounting additional volumes, adding environment variables and build args to existing services, or adding entirely new services. The one caveat is that the override file is completely additive, so you can't use it to remove anything from an existing compose file.
-
-Additional overrides can be chained together with the -f flag in docker-compose, though when using -f it's important to specify _all_ files in the order they should be applied. for example if you wish to include the sdkdev override file, your command would look like: `docker-compose -f docker-compose.yaml -f docker-compose.override.yaml -f docker-compose.sdkdev.yaml up`
-
 #### ngrok
 
 Services are generally exposed via `ngrok`, by starting a container running [ngrok](https://hub.docker.com/r/wernight/ngrok/) inside the `docker-compose` stack so that it has direct access to the stack's [network](https://docs.docker.com/compose/networking/#specify-custom-networks). To create these tunnels you need to set a "subdomain" for the tunnel, usually through an environment variable. Before setting the values, you may want to reserve the subdomain, just to ensure you don't run into issues starting the `ngrok` containers due to the specified subdomain being in use.
@@ -47,9 +39,23 @@ To Reserve an `ngrok` subdomain:
     ```
 - Click `Reserve`.
 
-Also, it may be helpful to export an `NGROK_AUTH` environment variable (obtained from ngrok's [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken) page) the same way you export `NS8_SRC`, just to avoid needing to copy the value into *N* different `.env` files.
+Many stacks in this repo require an `NGROK_AUTH` environment variable to be defined (obtained from ngrok's [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken) page, or if you've already setup ngrok locally, you can retrieve your auth token from `~/.ngrok2/ngrok.yml`). Also, default values for `ngrok` subdomains are commonly built from a `NGROK_SUBDOMAIN_PREFIX` environment variable (e.g., `NGROK_SUBDOMAIN_PREFIX=ns8-devname` will result in `protect-api` being served from `https://ns8-devname-protect-api.ngrok.io` by default).
 
-- If you've already setup ngrok locally, you can retrieve your auth token from `~/.ngrok2/ngrok.yml`
+## Composing Services with `compose-all.sh`
+
+The [`compose-all.sh`](../compose-all.sh) is used to compose multiple services in a single stack, and share configuration via environment variables across the services.
+
+Depending on what you're working on, different services can be composed together by setting the `COMPOSE_PROTECT_[SERVICE]` variable for the service you want to include, and running the `compose-all.sh` script to invoke setup the environment and invoke `docker-compose` with the services indicated.
+
+The way this works is to associate a `COMPOSE_PROTECT_[SERVICE]` variable with each service directory (e.g., `COMPOSE_PROTECT_API` is associated with [`protect-api`](../protect-api)). Each "service directory" contains a script named `get-compose-services.sh`, which prints out the names of the .yml files to be passed to `docker-compose`. Additionally, the service directory can contain an `.env.schema` file to define environment variables that must be defined (`compose-all.sh` will fail with an error message if any are not), and an `.env.defaults` file to set default values for required environment variables.
+
+Some care should be taken to not set the default value for the same environment variable in multiple "services", since the order the defaults are loaded in is arbitrary, and defaults are only applied in the case there is no value previously set (either pre-existing in the environment, or within the `.env` file). This means if a variable, e.g. `PROTECT_API_URL`, is optional, it should not be set to a default value of `''` in any service, since doing so can prevent it from being set to its real value later on. Instead, just leave the optional variable out of `.env.schema`, and document what happens if it is set. 
+
+Similarly, the services defined in each `docker-compose.yml` files should be distinct. If multiple stacks want to use the same service, include a compose `.yml` file for that service in the `common` directory, and return all desired `.yml` files from the `get-compose-services.sh` script. The order the `.yml` files are passed to `docker-compose` is lexiographic, so `compose-all.sh` can't be used in cases where the order of the `.yml` files is important (i.e., where the same service is defined in multiple files).
+
+### Multiple stacks
+
+The `COMPOSE_PROJECT_NAME` variable is used as a prefix for all resources created by `docker-compose`, so it's an easy way maintain containers and volumes for multiple stacks separately.  E.g., you can run `compose-all.sh down`, then update `COMPOSE_PROJECT_NAME` to some other value, and when you run `compose-all.sh up` will create all new containers and volumes, and your older containers and data will be left in tact in case you want to start them up again by setting `COMPOSE_PROJECT_NAME` back to its original value.  This makes it relatively easy to maintain stacks of different combinations by just keeping separate `.env.some-stack` files, and linking `.env` to the stack you want active.
 
 ## `docker-compose` from 10,000'
 
@@ -74,3 +80,9 @@ Print all logs (stdout) from the associated service.
 1. `docker-compose exec <service-name> <command>`
 
 Run `<command>` inside the `<service-name>` container.  For example, to start a shell inside the container for `protect-api`, you'd run something like `./compose.sh exec protect-api /bin/bash`.
+
+### Composition with `docker-compose`
+
+Overrides to the docker-compose.yaml can be configured in a non tracked file `docker-compose.override.yaml`. This will get picked up automatically along with the default `docker-compose.yaml`. It can be used for mounting additional volumes, adding environment variables and build args to existing services, or adding entirely new services. The one caveat is that the override file is completely additive, so you can't use it to remove anything from an existing compose file.
+
+Additional overrides can be chained together with the -f flag in docker-compose, though when using -f it's important to specify _all_ files in the order they should be applied. for example if you wish to include the sdkdev override file, your command would look like: `docker-compose -f docker-compose.yaml -f docker-compose.override.yaml -f docker-compose.sdkdev.yaml up`

@@ -13,12 +13,20 @@ services:
       AWS_PROFILE: current_session
       AWS_REGION: ${AWS_REGION}
       AWS_DEFAULT_REGION: ${AWS_REGION}
-      NEW_RELIC_ENABLED: "false"
+      PROTECT_API_COMPOSE_MYSQL: ${PROTECT_API_COMPOSE_MYSQL:-}
+      PROTECT_API_COMPOSE_POSTGRES: ${PROTECT_API_COMPOSE_POSTGRES:-}
       DYNAMODB_ENDPOINT_URL: "http://dynamodb:8000"
       # ns8-protect-api expected env vars
       APP_ENV: ${APP_ENV}
       # start with or without nodemon and debugger
-      NO_DEBUG: ${NO_DEBUG}
+      NO_DEBUG: ${NO_DEBUG:-}
+      # If set, do not use command-line arguments to override values from config/${APP_ENV}.yml
+      PROTECT_API_NO_CONFIG_OVERRIDES: ${PROTECT_API_NO_CONFIG_OVERRIDES:-}
+      # these are used to override values from config/${APP_ENV}.yml, if set
+      PROTECT_API_URL: ${PROTECT_API_URL}
+      PROTECT_CLIENT_URL: ${PROTECT_CLIENT_URL:-}
+      TEMPLATE_SERVICE_URL: ${TEMPLATE_SERVICE_URL:-}
+
     networks:
       - protect
     ports:
