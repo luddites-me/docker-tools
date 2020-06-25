@@ -5,30 +5,45 @@ services:
     build:
       dockerfile: ../Dockerfile
       context: ${NS8_SRC}/protect-tools-docker/magento/build-context
+      args: 
+        BUILD_ENABLE_XDEBUG: $BUILD_ENABLE_XDEBUG
     depends_on:
       - mysql
     environment:
-      # This variable must match the mount location below in `volumes`
-      # and be a subdirectory of `/var/www/html` to make apache happy
-      MODULE_SRC: "/var/www/html/protect-integration-module"
-    networks:
-      - protect
-    sysctls:
-      # Needed for non-root APACHE_RUN_USER when binding to port 80
-      net.ipv4.ip_unprivileged_port_start: 0
+      - "MAGENTO_BASE_URL=${MAGENTO_BASE_URL}"
+      - "PROTECT_API_URL=https://test-protect.ns8.com"
+      - "PROTECT_CLIENT_URL=https://test-protect-client.ns8.com"
+      - "MODULE_SRC=${MODULE_SRC:-/var/www/html/protect-integration-module}"
+      - "INSTALL_MODULE=${INSTALL_MODULE:-true}"
+      - "INSTALL_DATA=${INSTALL_DATA:-false}"
+      - "INSTALL_DEV_MODULE=${INSTALL_DEV_MODULE:-true}"
+      - "BACKOFFICE_PATH=${BACKOFFICE_PATH:-ns8_admin}"
+      - "BACKOFFICE_USERNAME=${BACKOFFICE_USERNAME:-admin}"
+      - "BACKOFFICE_PASSWORD=${BACKOFFICE_PASSWORD:-magento-admin-pw-1!}"
+      - "MYSQL_USER=${MYSQL_USER-magento_db_user}"
+      - "MYSQL_PASSWORD=${MYSQL_PASSWORD-magento_db_password}"
+      - "MYSQL_DATABASE=${MYSQL_DATABASE-magento2}"
     volumes:
       # Map the module source so that changes made on the host are seen inside the container
-      - "${NS8_SRC}/protect-integration-magento/:/var/www/html/protect-integration-module"
+      - "${NS8_SRC}/protect-integration-magento/:${MODULE_SRC:-/var/www/html/protect-integration-module}"
       # Map the .env file so that changes can take effect without recreating the container
       - "${NS8_SRC}/protect-tools-docker/magento/.env:/etc/environment"
 
   ngrok-magento:
+    image: wernight/ngrok
     depends_on:
       - magento
     environment:
       NGROK_AUTH: "${NGROK_AUTH}"
       NGROK_SUBDOMAIN: "${MAGENTO_NGROK_SUBDOMAIN}"
       NGROK_PORT: "magento:80"
-    image: wernight/ngrok
-    networks:
-      - protect
+
+  mysql:
+    image: mysql:5.6
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD-secret}"
+      - "MYSQL_USER=${MYSQL_USER-magento_db_user}"
+      - "MYSQL_PASSWORD=${MYSQL_PASSWORD-magento_db_password}"
+      - "MYSQL_DATABASE=${MYSQL_DATABASE-magento2}"
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"

@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+  magento:
+    environment:
+        - "INSTALL_DEV_PHP_SDK=${INSTALL_DEV_PHP_SDK:-true}
+        - "SDK_SRC=/var/www/html/protect-sdk-php"
+    volumes:
+      - "${NS8_SRC}/protect-sdk-php/:/var/www/html/protect-sdk-php"
