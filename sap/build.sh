@@ -9,7 +9,7 @@ IMAGE_PREFIX="244249143763.dkr.ecr.us-west-2.amazonaws.com"
 BUILDER_IMAGE="$IMAGE_PREFIX/protect-integration-hybris-builder"
 RUNNER_IMAGE="$IMAGE_PREFIX/protect-integration-hybris-runner"
 
-function check_aws() {
+function check_aws () {
   if ! [ -x "$(command -v aws)" ]; then
     echo "Error: aws-cli is not installed." >&2
     exit 1

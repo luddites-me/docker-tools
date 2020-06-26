@@ -1,11 +1,19 @@
 #!/bin/bash
 
+set -e
+
 if [ $# -eq 0 ]; then
-  echo "Usage: ./get-integration-artifact.sh <outputFile>";
-  exit 1;
+  echo "Usage: ./get-integration-artifact.sh <outputFile>"
+  exit 1
+fi
+
+if [ -f hybris-connector.zip ]; then
+  echo "Connector artifact copied from local dir, not downloading latest release."
+  exit 0
 fi
 
 OUTPUT_FILE="$1"
+
 RELEASE_API_URL="https://api.github.com/repos/ns8inc/protect-integration-sap/releases/latest"
 
 apt-get install -y jq
