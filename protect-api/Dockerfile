@@ -1,4 +1,4 @@
-ARG NODE_VERSION=10.18.0
+ARG NODE_VERSION=12.17.0
 FROM node:${NODE_VERSION}-alpine
 
 # If you have native dependencies, you'll need extra tools
