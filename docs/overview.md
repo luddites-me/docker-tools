@@ -1,9 +1,9 @@
 
 # Protect Docker Tools Overview
 
-This repo contains [Docker Compose](https://docs.docker.com/compose/) stacks for various parts of the NS8 Protect stack. Depending on what you're working on, different stacks can be composed together by passing the `docker-compose.yml` file for the components you want to run to `docker-compose`.  For example, the [compose-all](../protect-client/compose-all.sh) script will compose together the `docker-compose.yml` for the client, along with the pieces necessary to run the protect API in a `docker-compose` stack. For common combinations (e.g., `protect-client` along with `protect-api`), stacks in this repo should include `./compose[-parts].sh` scripts for convenience.
+This repo contains [Docker Compose](https://docs.docker.com/compose/) stacks for various parts of the NS8 Protect stack. Depending on what you're working on, different stacks can be composed together by passing the `docker-compose.yml` file for the components you want to run to `docker-compose`. For common combinations (e.g., `protect-client` along with `protect-api`), stacks in this repo should include `./compose[-parts].sh` scripts for convenience.
 
-Configuration for the stacks is generally done with `.env` files.  When composing stacks, the `.env` file must contain all variables for all parts of the stack being composed. E.g., for `magento/compose-all.sh`, the `.env` file must contain all the variables necessary for `magento`, `protect-api` and `protect-client`.
+Configuration for the stacks is generally done with `.env` files.  When composing stacks, the `.env` file must contain all variables for all parts of the stack being composed.
 
 ## Setup
 
@@ -11,7 +11,7 @@ Before using the stacks in the repo you need several tools and accounts setup; t
 
 ### Environment
 
-The scripts in this repo expect the various NS8 repositories to be checked out to a single directory, and the `NS8_SRC` environment variable is used to reference that directory.  To facilitate this, choose a directory and set it as the `NS8_SRC` environment variable in a file like `~/.zshrc` or `~/.bashrc` (don't forget to `source` the file after you save it):
+The scripts in this repo expect the various NS8 repositories to be checked out to a single directory, and the `NS8_SRC` environment variable is used to reference that directory. Either set the path manually in the .env file, or if using the same path universally, remove the key from the .env file and set `NS8_SRC` environment variable in a file like `~/.zshrc` or `~/.bashrc` (don't forget to `source` the file after you save it):
 
 ```bash
 export NS8_SRC=~/src
@@ -25,6 +25,12 @@ $ git clone https://github.com/ns8inc/protect-tools-docker
 ```
 
 The above command will clone the repo into `protect-tools-docker`; it has to be cloned into that exact directory, as do all the other repos referenced by these scripts, or they won't work.
+
+### Overrides
+
+Overrides to the docker-compose.yaml can be configured in a non tracked file `docker-compose.override.yaml`. This will get picked up automatically along with the default `docker-compose.yaml`. It can be used for mounting additional volumes, adding environment variables and build args to existing services, or adding entirely new services. The one caveat is that the override file is completely additive, so you can't use it to remove anything from an existing compose file.
+
+Additional overrides can be chained together with the -f flag in docker-compose, though when using -f it's important to specify _all_ files in the order they should be applied. for example if you wish to include the sdkdev override file, your command would look like: `docker-compose -f docker-compose.yaml -f docker-compose.override.yaml -f docker-compose.sdkdev.yaml up`
 
 #### ngrok
 
@@ -42,6 +48,8 @@ To Reserve an `ngrok` subdomain:
 - Click `Reserve`.
 
 Also, it may be helpful to export an `NGROK_AUTH` environment variable (obtained from ngrok's [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken) page) the same way you export `NS8_SRC`, just to avoid needing to copy the value into *N* different `.env` files.
+
+- If you've already setup ngrok locally, you can retrieve your auth token from `~/.ngrok2/ngrok.yml`
 
 ## `docker-compose` from 10,000'
 

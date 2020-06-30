@@ -2,26 +2,13 @@
 
 set -e
 
-# if [ "${HOME}" != "/var/www" ]; then
-#   echo "This script assumes it's run by 'www-data' with homedir '/var/www', not $(id)"
-#   exit 1
-# fi
-
 # This allows us to override environment variables by updating `/etc/environment`
 # and then restarting the container, without needing to recreate the container.
 set -o allexport
 source /etc/environment
 
-
-# cd "${HOME}"
-# php ./try-connect-magento-db.php
 /tmp/check-db-status.sh
 
-# if [ ! -e .magento-db-create-date ]; then
-#   echo "Creating Magento database"
-#   php /tmp/create-magento-db.php
-#   date > .magento-db-create-date
-# fi
 
 if [ ! -e .magento-install-date ]; then
   chmod +x "${BIN_MAGENTO}"
