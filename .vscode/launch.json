@@ -9,11 +9,12 @@
       "request": "attach",
       "name": "Protect API: Attach",
       "port": 49229,
-      "localRoot": "${env:NS8_SRC}/ns8-protect-api/src",
-      "remoteRoot": "/home/node/ns8-protect-api",
       "skipFiles": [
         "<node_internals>/**"
       ],
+      "sourceMapPathOverrides": {
+        "/home/node/ns8-protect-api/*": "${env:NS8_SRC}/ns8-protect-api/*",
+      },
       "trace": true
     },
     {
