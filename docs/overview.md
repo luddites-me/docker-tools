@@ -7,6 +7,15 @@ This repo contains [Docker Compose](https://docs.docker.com/compose/) stacks for
 
 Before using the stacks in the repo you need several tools and accounts setup; the easiest way to make sure all this has been completed is by following the [Setup - Getting Started](https://ns8.slab.com/posts/setup-getting-started-sph7gsfr) document in Slab.
 
+### Mac
+
+If you're using a Mac, you'll need to install some dependencies ([Homebrew](https://brew.sh/), Bash 5.x, and coreutils):
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+brew install bash coreutils
+```
+
 ### Environment
 
 The scripts in this repo expect the various NS8 repositories to be checked out to a single directory, and the `NS8_SRC` environment variable is used to reference that directory. Either set the path manually in the .env file, or if using the same path universally, remove the key from the .env file and set `NS8_SRC` environment variable in a file like `~/.zshrc` or `~/.bashrc` (don't forget to `source` the file after you save it):
@@ -18,13 +27,13 @@ export NS8_SRC=~/src
 Also, all repos must be checked out to a directory that matches the repo name, e.g:
 
 ```bash
-$ cd $NS8_SRC
-$ git clone https://github.com/ns8inc/protect-tools-docker
+cd $NS8_SRC
+git clone https://github.com/ns8inc/protect-tools-docker
 ```
 
 The above command will clone the repo into `protect-tools-docker`; it has to be cloned into that exact directory, as do all the other repos referenced by these scripts, or they won't work.
 
-#### ngrok
+#### `ngrok`
 
 Services are generally exposed via `ngrok`, by starting a container running [ngrok](https://hub.docker.com/r/wernight/ngrok/) inside the `docker-compose` stack so that it has direct access to the stack's [network](https://docs.docker.com/compose/networking/#specify-custom-networks). To create these tunnels you need to set a "subdomain" for the tunnel, usually through an environment variable. Before setting the values, you may want to reserve the subdomain, just to ensure you don't run into issues starting the `ngrok` containers due to the specified subdomain being in use.
 
@@ -34,9 +43,11 @@ To Reserve an `ngrok` subdomain:
 - Go to the [Domains](https://dashboard.ngrok.com/endpoints/domains) page.
 - Click `+ Reserve a Domain`.
 - Enter a name and description for the domain. An example name pattern is:
-    ```
-    firstnamelastname-protect-api
-    ```
+
+  ```text
+  firstnamelastname-protect-api
+  ```
+
 - Click `Reserve`.
 
 Many stacks in this repo require an `NGROK_AUTH` environment variable to be defined (obtained from ngrok's [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken) page, or if you've already setup ngrok locally, you can retrieve your auth token from `~/.ngrok2/ngrok.yml`). Also, default values for `ngrok` subdomains are commonly built from a `NGROK_SUBDOMAIN_PREFIX` environment variable (e.g., `NGROK_SUBDOMAIN_PREFIX=ns8-devname` will result in `protect-api` being served from `https://ns8-devname-protect-api.ngrok.io` by default).
@@ -49,7 +60,7 @@ Depending on what you're working on, different services can be composed together
 
 The way this works is to associate a `COMPOSE_PROTECT_[SERVICE]` variable with each service directory (e.g., `COMPOSE_PROTECT_API` is associated with [`protect-api`](../protect-api)). Each "service directory" contains a script named `get-compose-services.sh`, which prints out the names of the .yml files to be passed to `docker-compose`. Additionally, the service directory can contain an `.env.schema` file to define environment variables that must be defined (`compose-all.sh` will fail with an error message if any are not), and an `.env.defaults` file to set default values for required environment variables.
 
-Some care should be taken to not set the default value for the same environment variable in multiple "services", since the order the defaults are loaded in is arbitrary, and defaults are only applied in the case there is no value previously set (either pre-existing in the environment, or within the `.env` file). This means if a variable, e.g. `PROTECT_API_URL`, is optional, it should not be set to a default value of `''` in any service, since doing so can prevent it from being set to its real value later on. Instead, just leave the optional variable out of `.env.schema`, and document what happens if it is set. 
+Some care should be taken to not set the default value for the same environment variable in multiple "services", since the order the defaults are loaded in is arbitrary, and defaults are only applied in the case there is no value previously set (either pre-existing in the environment, or within the `.env` file). This means if a variable, e.g. `PROTECT_API_URL`, is optional, it should not be set to a default value of `''` in any service, since doing so can prevent it from being set to its real value later on. Instead, just leave the optional variable out of `.env.schema`, and document what happens if it is set.
 
 Similarly, the services defined in each `docker-compose.yml` files should be distinct. If multiple stacks want to use the same service, include a compose `.yml` file for that service in the `common` directory, and return all desired `.yml` files from the `get-compose-services.sh` script. The order the `.yml` files are passed to `docker-compose` is lexiographic, so `compose-all.sh` can't be used in cases where the order of the `.yml` files is important (i.e., where the same service is defined in multiple files).
 

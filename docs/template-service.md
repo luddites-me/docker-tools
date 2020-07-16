@@ -15,8 +15,8 @@ Whten this service is composed with `protect-api`, it will define `TEMPLATE_SERV
 ### Getting the source
 
 ```bash
-$ cd $NS8_SRC
-$ git clone https://github.com/ns8inc/ns8-template-service
+cd $NS8_SRC
+git clone https://github.com/ns8inc/ns8-template-service
 ```
 
 ### Configuration

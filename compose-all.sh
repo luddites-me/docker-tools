@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -o errexit
 
@@ -8,7 +8,6 @@ declare -A VAR_NAME_TO_STACK_DIR_MAP
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_PROTECT_API]="$(realpath "${SCRIPTDIR}/protect-api")"
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_PROTECT_CLIENT]="$(realpath "${SCRIPTDIR}/protect-client")"
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_TEMPLATE_SERVICE]="$(realpath "${SCRIPTDIR}/template-service")"
-
 
 echo-err () {
   echo "ERROR: " "$@" 1>&2
