@@ -29,13 +29,16 @@ fi
 # Install Protect
 /tmp/wait-for-protect.sh
 if ! ${BIN_MAGENTO} setup:upgrade; then
-  printf "\n\n *** magento setup:upgrade failed *** \n\n"windows 
+  printf "\n\n *** magento setup:upgrade failed *** \n\n"
   if [ "${INSTALL_DEV_PHP_SDK}" != "1" ]; then
     exit 1
   fi
 fi
 
-${BIN_MAGENTO} cron:install
-${BIN_MAGENTO} cache:clean  
-${BIN_MAGENTO} setup:di:compile
+if [ "${INSTALL_DEV_MODULE}" = "true" ]; then
+  ${BIN_MAGENTO} deploy:mode:set developer
+fi
 
+${BIN_MAGENTO} cron:install
+${BIN_MAGENTO} cache:clean
+${BIN_MAGENTO} setup:di:compile

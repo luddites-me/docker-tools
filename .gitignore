@@ -2,3 +2,5 @@
 .idea
 docker-compose.override.yaml
 node_modules/*
+magento/build-context/Magento*
+

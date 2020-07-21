@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: ../Dockerfile
       context: ${NS8_SRC}/protect-tools-docker/magento/build-context
-      args: 
+      args:
         BUILD_ENABLE_XDEBUG: $BUILD_ENABLE_XDEBUG
     depends_on:
       - mysql
@@ -24,6 +24,7 @@ services:
       - "MYSQL_PASSWORD=${MYSQL_PASSWORD-magento_db_password}"
       - "MYSQL_DATABASE=${MYSQL_DATABASE-magento2}"
     volumes:
+      - ${NS8_SRC}/protect-tools-docker/magento/build-context
       # Map the module source so that changes made on the host are seen inside the container
       - "${NS8_SRC}/protect-integration-magento/:${MODULE_SRC:-/var/www/html/protect-integration-module}"
       # Map the .env file so that changes can take effect without recreating the container
@@ -37,7 +38,8 @@ services:
       NGROK_AUTH: "${NGROK_AUTH}"
       NGROK_SUBDOMAIN: "${MAGENTO_NGROK_SUBDOMAIN}"
       NGROK_PORT: "magento:80"
-
+    ports:
+      - "${NGROK_PORT:-4050}:4040"
   mysql:
     image: mysql:5.6
     environment:
