@@ -6,6 +6,7 @@ services:
       dockerfile: ../Dockerfile
       context: ${NS8_SRC}/protect-tools-docker/protect-client/build-context
     environment:
+      NPM_TOKEN: ${NPM_TOKEN:-}
       PROTECT_API_URL: ${PROTECT_API_URL}
     networks:
       - protect

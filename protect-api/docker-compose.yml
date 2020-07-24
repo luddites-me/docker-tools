@@ -10,7 +10,7 @@ services:
       - dynamodb
     environment:
       # uses the [current_session] section from credentials file for MFA
-      AWS_PROFILE: current_session
+      AWS_PROFILE: ${AWS_PROFILE:-current_session}
       AWS_REGION: ${AWS_REGION}
       AWS_DEFAULT_REGION: ${AWS_REGION}
       PROTECT_API_COMPOSE_MYSQL: ${PROTECT_API_COMPOSE_MYSQL:-}
@@ -26,6 +26,7 @@ services:
       PROTECT_API_URL: ${PROTECT_API_URL}
       PROTECT_CLIENT_URL: ${PROTECT_CLIENT_URL:-}
       TEMPLATE_SERVICE_URL: ${TEMPLATE_SERVICE_URL:-}
+      NPM_TOKEN: ${NPM_TOKEN:-}
 
     networks:
       - protect
