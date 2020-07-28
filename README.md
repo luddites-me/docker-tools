@@ -15,3 +15,5 @@ Docker images for use in testing Protect
 [Protect Client](./docs/protect-client.md)
 
 [Template Service](./docs/template-service.md)
+
+[V1 Api Service](./docs/v1-api-service.md)

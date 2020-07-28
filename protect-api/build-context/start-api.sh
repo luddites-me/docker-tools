@@ -67,6 +67,11 @@ if [ -z "${PROTECT_API_NO_CONFIG_OVERRIDES}" ]; then
     echo "Setting 'ns8TemplateHostUrl' to ${TEMPLATE_SERVICE_URL}"
     CONFIG_OVERRIDE_OPTS+=("ns8TemplateHostUrl=${TEMPLATE_SERVICE_URL}")
   fi
+
+  if [ -n "${V1_API_SERVICE_URL}" ]; then
+    echo "Setting 'v1Proxy.baseUrl' to ${V1_API_SERVICE_URL}"
+    CONFIG_OVERRIDE_OPTS+=("v1Proxy.baseUrl=${V1_API_SERVICE_URL}")
+  fi
 fi
 
 

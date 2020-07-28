@@ -8,6 +8,7 @@ declare -A VAR_NAME_TO_STACK_DIR_MAP
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_PROTECT_API]="$(realpath "${SCRIPTDIR}/protect-api")"
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_PROTECT_CLIENT]="$(realpath "${SCRIPTDIR}/protect-client")"
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_TEMPLATE_SERVICE]="$(realpath "${SCRIPTDIR}/template-service")"
+VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_V1_API_SERVICE]="$(realpath "${SCRIPTDIR}/v1-api-service")"
 
 echo-err () {
   echo "ERROR: " "$@" 1>&2

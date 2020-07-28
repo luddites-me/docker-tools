@@ -27,6 +27,7 @@ services:
       PROTECT_CLIENT_URL: ${PROTECT_CLIENT_URL:-}
       TEMPLATE_SERVICE_URL: ${TEMPLATE_SERVICE_URL:-}
       NPM_TOKEN: ${NPM_TOKEN:-}
+      V1_API_SERVICE_URL: ${V1_API_SERVICE_URL:-}
 
     networks:
       - protect

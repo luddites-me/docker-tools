@@ -51,6 +51,9 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
  10. `TEMPLATE_SERVICE_URL`
   - default: none
   - if non-empty, this is used to override `ns8TemplateHostUrl` in `config/${APP_ENV}.yml`. If composing with `template-service`, this will be set by that service by default
+ 11. `V1_API_SERVICE_URL`
+  - default: https://${V1_API_SERVICE_SUBDOMAIN}.ngrok.io/
+  - this will override the ``v1Proxy.baseUrl`` url in `config/${APP_ENV}.yml`
 
 ## Development
 

@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  v1-api-service:
+    build:
+      dockerfile: ../Dockerfile
+      context: ${NS8_SRC}/protect-tools-docker/v1-api-service/build-context
+    environment:
+      APP_ENV: "dev"
+    networks:
+      - protect
+    ports:
+      - "127.0.0.1:49231:9229"
+      - "3333:3333"
+    volumes:
+      - "~/.npmrc/:/home/node/.npmrc:ro"
+      - "${NS8_SRC}/ns8-api-host:/home/node/ns8-api-host"
+
+  ngrok-v1-api-service:
+    depends_on:
+      - v1-api-service
+    environment:
+      NGROK_AUTH: "${NGROK_AUTH}"
+      NGROK_SUBDOMAIN: "${V1_API_SERVICE_SUBDOMAIN}"
+      NGROK_PORT: "v1-api-service:3333"
+    image: wernight/ngrok
+    networks:
+      - protect
+    ports:
+      - "40405:4040"
