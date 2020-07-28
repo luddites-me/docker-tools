@@ -5,10 +5,14 @@ ADD https://ns8-magento-installers.s3.amazonaws.com/Magento-CE-%%MAGENTO_VERSION
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y default-mysql-server jq libicu-dev libjpeg-dev libpng-dev libxslt1-dev libzip-dev unzip wget
+    apt-get install -y default-mysql-server gnupg jq libicu-dev libjpeg-dev libpng-dev libxslt1-dev libzip-dev unzip wget
 
-RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ && \
-    docker-php-ext-install bcmath gd intl pdo_mysql soap sockets xsl zip
+# PHP 7.4 replaced the `--with-jpeg-dir` option with `--with-jpeg`. We can use dpkg to compare semvers.
+RUN dpkg --compare-versions "$( php -i | grep PHP_VERSION | head -n1 | awk '{print $3}' )" gt 7.4 \
+    && docker-php-ext-configure gd --with-jpeg \
+    || docker-php-ext-configure gd --with-jpeg-dir=/usr/include/
+
+RUN docker-php-ext-install bcmath gd intl pdo_mysql soap sockets xsl zip
 
 RUN pecl install xdebug && \
     docker-php-ext-enable xdebug
@@ -25,11 +29,19 @@ RUN cd /tmp && \
     fi && \
     php composer-setup.php --filename=composer --install-dir=/usr/local/bin --quiet
 
+RUN curl https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
+
+RUN apt-get install apt-transport-https && \
+    echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" >> /etc/apt/sources.list.d/elastic-7.x.list
+
+RUN apt-get update && apt-get install -y elasticsearch
+
 RUN unzip /tmp/magento.zip -d /var/www/html
 
 RUN composer install -d /var/www/html --no-ansi
 
 RUN service mysql start && \
+    service elasticsearch start && \
     mysqladmin create magento2 && \
     mysql -e "GRANT ALL PRIVILEGES ON magento2.* TO 'magento_db_user'@'localhost' IDENTIFIED BY 'magento_db_password'" && \
     /var/www/html/bin/magento setup:install \
