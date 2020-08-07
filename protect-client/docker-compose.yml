@@ -13,6 +13,9 @@ services:
     volumes:
       - "~/.npmrc/:/home/node/.npmrc:ro"
       - "${NS8_SRC}/ns8-protect-client:/home/node/ns8-protect-client"
+    ports:
+      - "53000:3000"
+      - "54000:4000"
 
   ngrok-protect-client:
     depends_on:

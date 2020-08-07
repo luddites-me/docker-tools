@@ -7,11 +7,15 @@ services:
       context: ${NS8_SRC}/protect-tools-docker/v1-api-service/build-context
     environment:
       APP_ENV: "dev"
+      MONGO_PORT: "${MONGO_PORT}"
+      MONGO_HOST: "${MONGO_HOST}"
+      MONGO_USERNAME: "${MONGO_USERNAME}"
+      MONGO_PWD: "${MONGO_PWD}"
     networks:
       - protect
     ports:
       - "127.0.0.1:49231:9229"
-      - "3333:3333"
+      - "53333:3333"
     volumes:
       - "~/.npmrc/:/home/node/.npmrc:ro"
       - "${NS8_SRC}/ns8-api-host:/home/node/ns8-api-host"

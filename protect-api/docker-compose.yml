@@ -33,6 +33,7 @@ services:
       - protect
     ports:
       - "127.0.0.1:49229:9229"
+      - "58080:8080"
     volumes:
       # TODO: potentially use localstack for SSM/S3/Lambda
       - "~/.aws/:/home/node/.aws:ro"
