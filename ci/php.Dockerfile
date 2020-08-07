@@ -1,4 +1,6 @@
-FROM php:%%PHP_VERSION%%-cli
+ARG PHP_VERSION
+
+FROM php:${PHP_VERSION}-cli
 
 ARG DEBIAN_FRONTEND=noninteractive
 

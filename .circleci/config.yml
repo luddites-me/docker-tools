@@ -1,0 +1,123 @@
+version: 2.1
+
+commands:
+  docker-build-push:
+    description: "Builds a Docker image and pushes to Artifactory if on master"
+    parameters:
+      tag_name:
+        description: "Full tag for output Docker image"
+        type: string
+      build_command:
+        description: "Command to actually build the image with appropriate params"
+        type: string
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
+      - run:
+          name: 🔓 Login to Docker Registry 🔓
+          command: |
+            echo "${NS8_GLOBAL_REGISTRY_PASSWORD}" | docker login \
+              --username ${NS8_GLOBAL_REGISTRY_USERNAME} \
+              --password-stdin \
+              ${NS8_GLOBAL_REGISTRY_HOSTNAME}
+      - run:
+          name: 🐳 Build Docker image 🐳
+          command: << parameters.build_command >>
+      - when:
+          condition:
+            equal: [ master, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: 🐸 Push Docker image 🐸
+                command: |
+                  docker push << parameters.tag_name >>
+
+jobs:
+  docker-ci-node-yarn2:
+    parameters:
+      tag_name:
+        description: Full tag (excluding version) for output Docker image
+        type: string
+      version:
+        description: Node version
+        type: string
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - docker-build-push:
+          tag_name: << parameters.tag_name >>:<< parameters.version >>
+          build_command: |
+            docker build \
+              -t << parameters.tag_name >>:<< parameters.version >> \
+              -f ci/node-yarn2.Dockerfile \
+              --build-arg NODE_VERSION=<< parameters.version >> \
+              ./ci
+  docker-ci-magento:
+    parameters:
+      tag_name:
+        description: Full tag (excluding version) for output Docker image
+        type: string
+      magento_version:
+        description: Magento version
+        type: string
+      php_version:
+        description: PHP version
+        type: string
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - docker-build-push:
+          tag_name: << parameters.tag_name >>:<< parameters.php_version >>-<< parameters.magento_version >>
+          build_command: |
+            docker build \
+              -t << parameters.tag_name >>:<< parameters.php_version >>-<< parameters.magento_version >> \
+              -f ci/magento.Dockerfile \
+              --build-arg MAGENTO_VERSION=<< parameters.magento_version >> \
+              --build-arg PHP_VERSION=<< parameters.php_version >> \
+              ./ci
+
+workflows:
+  build-all:
+    jobs:
+      - docker-ci-node-yarn2:
+          context: org-global
+          tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/node-yarn2
+          matrix:
+            parameters:
+              version: ["10.21", "12.18", "14.5"]
+      #
+      ### Disabled for now since it runs a ton of concurrent jobs
+      #
+      # - docker-ci-magento:
+      #     context: org-global
+      #     tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/magento
+      #     matrix:
+      #       parameters:
+      #         magento_version: ["2.3.0", "2.3.1", "2.3.2-p2", "2.3.3", "2.3.4-p2", "2.3.5-p2", "2.4.0"]
+      #         php_version: ["7.1", "7.2", "7.3", "7.4"]
+      #       exclude: # lots of PHP/Magento versions aren't supported together
+      #         - php_version: "7.1"
+      #           magento_version: "2.3.4-p2"
+      #         - php_version: "7.1"
+      #           magento_version: "2.3.5"
+      #         - php_version: "7.1"
+      #           magento_version: "2.4.0"
+      #         - php_version: "7.2"
+      #           magento_version: "2.4.0"
+      #         - php_version: "7.3"
+      #           magento_version: "2.3.0"
+      #         - php_version: "7.3"
+      #           magento_version: "2.3.1"
+      #         - php_version: "7.4"
+      #           magento_version: "2.3.0"
+      #         - php_version: "7.4"
+      #           magento_version: "2.3.1"
+      #         - php_version: "7.4"
+      #           magento_version: "2.3.2-p2"
+      #         - php_version: "7.4"
+      #           magento_version: "2.3.3"
+      #         - php_version: "7.4"
+      #           magento_version: "2.3.4-p2"
+      #         - php_version: "7.4"
+      #           magento_version: "2.3.5-p2"

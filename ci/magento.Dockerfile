@@ -1,6 +1,10 @@
-FROM php:%%PHP_VERSION%%-apache
+ARG PHP_VERSION
 
-ADD https://ns8-magento-installers.s3.amazonaws.com/Magento-CE-%%MAGENTO_VERSION%%_sample_data.zip /tmp/magento.zip
+FROM php:${PHP_VERSION}-apache
+
+ARG MAGENTO_VERSION
+
+ADD https://ns8-magento-installers.s3.amazonaws.com/Magento-CE-${MAGENTO_VERSION}_sample_data.zip /tmp/magento.zip
 
 ARG DEBIAN_FRONTEND=noninteractive
 
