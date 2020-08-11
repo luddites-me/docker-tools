@@ -9,7 +9,7 @@ ARG S3_HYBRIS_URL
 
 # install unzip & pip
 RUN apt-get update
-RUN apt-get install -y unzip python3-pip
+RUN apt-get install -y ca-certificates python3-pip ssh unzip zip
 
 # install AWS CLI from pip (because apt's version is usually very out of date)
 RUN pip3 install awscli
