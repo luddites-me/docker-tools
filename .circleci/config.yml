@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  swissknife: roopakv/swissknife@0.50.0
+
 commands:
   docker-build-push:
     description: "Builds a Docker image and pushes to Artifactory if on master"
@@ -34,6 +37,23 @@ commands:
                   docker push << parameters.tag_name >>
 
 jobs:
+  trigger-workflows:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - swissknife/trigger-workflows-for-all-modified:
+          # always check changes based on master HEAD, not current branch
+          use-divergence-point: true
+          base-branch: master
+          use-swissknife-sha: true
+          additional-param-map: '{ "trigger-workflows": false }'
+          code-param-name-map: |
+            [
+              { "regex": "^ci/node-yarn2.Dockerfile$", "param_name": "docker-ci-node-yarn2" }
+            ]
+          #
+          #    { "regex": "^ci/magento.Dockerfile$", "param_name": "docker-ci-magento" }
   docker-ci-node-yarn2:
     parameters:
       tag_name:
@@ -51,6 +71,25 @@ jobs:
             docker build \
               -t << parameters.tag_name >>:<< parameters.version >> \
               -f ci/node-yarn2.Dockerfile \
+              --build-arg NODE_VERSION=<< parameters.version >> \
+              ./ci
+  docker-ci-php:
+    parameters:
+      tag_name:
+        description: Full tag (excluding version) for output Docker image
+        type: string
+      version:
+        description: PHP version
+        type: string
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - docker-build-push:
+          tag_name: << parameters.tag_name >>:<< parameters.version >>
+          build_command: |
+            docker build \
+              -t << parameters.tag_name >>:<< parameters.version >> \
+              -f ci/php.Dockerfile \
               --build-arg NODE_VERSION=<< parameters.version >> \
               ./ci
   docker-ci-magento:
@@ -78,7 +117,12 @@ jobs:
               ./ci
 
 workflows:
-  build-all:
+  trigger-workflows:
+    when: << pipeline.parameters.trigger-workflows >>
+    jobs:
+      - trigger-workflows
+  docker-ci-node-yarn2:
+    when: << pipeline.parameters.docker-ci-node-yarn2 >>
     jobs:
       - docker-ci-node-yarn2:
           context: org-global
@@ -86,38 +130,64 @@ workflows:
           matrix:
             parameters:
               version: ["10.21", "12.18", "14.5"]
-      #
-      ### Disabled for now since it runs a ton of concurrent jobs
-      #
-      # - docker-ci-magento:
-      #     context: org-global
-      #     tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/magento
-      #     matrix:
-      #       parameters:
-      #         magento_version: ["2.3.0", "2.3.1", "2.3.2-p2", "2.3.3", "2.3.4-p2", "2.3.5-p2", "2.4.0"]
-      #         php_version: ["7.1", "7.2", "7.3", "7.4"]
-      #       exclude: # lots of PHP/Magento versions aren't supported together
-      #         - php_version: "7.1"
-      #           magento_version: "2.3.4-p2"
-      #         - php_version: "7.1"
-      #           magento_version: "2.3.5"
-      #         - php_version: "7.1"
-      #           magento_version: "2.4.0"
-      #         - php_version: "7.2"
-      #           magento_version: "2.4.0"
-      #         - php_version: "7.3"
-      #           magento_version: "2.3.0"
-      #         - php_version: "7.3"
-      #           magento_version: "2.3.1"
-      #         - php_version: "7.4"
-      #           magento_version: "2.3.0"
-      #         - php_version: "7.4"
-      #           magento_version: "2.3.1"
-      #         - php_version: "7.4"
-      #           magento_version: "2.3.2-p2"
-      #         - php_version: "7.4"
-      #           magento_version: "2.3.3"
-      #         - php_version: "7.4"
-      #           magento_version: "2.3.4-p2"
-      #         - php_version: "7.4"
-      #           magento_version: "2.3.5-p2"
+  docker-ci-php:
+    when: << pipeline.parameters.docker-ci-php >>
+    jobs:
+      - docker-ci-php:
+          context: org-global
+          tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/php
+          matrix:
+            parameters:
+              version: ["7.1", "7.2", "7.3", "7.4"]
+  docker-ci-magento:
+    when: << pipeline.parameters.docker-ci-magento >>
+    jobs:
+      - docker-ci-magento:
+          context: org-global
+          tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/magento
+          matrix:
+            parameters:
+              magento_version: ["2.3.0", "2.3.1", "2.3.2-p2", "2.3.3", "2.3.4-p2", "2.3.5-p2", "2.4.0"]
+              php_version: ["7.1", "7.2", "7.3", "7.4"]
+            exclude: # lots of PHP/Magento versions aren't supported together
+              - php_version: "7.1"
+                magento_version: "2.3.4-p2"
+              - php_version: "7.1"
+                magento_version: "2.3.5"
+              - php_version: "7.1"
+                magento_version: "2.4.0"
+              - php_version: "7.2"
+                magento_version: "2.4.0"
+              - php_version: "7.3"
+                magento_version: "2.3.0"
+              - php_version: "7.3"
+                magento_version: "2.3.1"
+              - php_version: "7.4"
+                magento_version: "2.3.0"
+              - php_version: "7.4"
+                magento_version: "2.3.1"
+              - php_version: "7.4"
+                magento_version: "2.3.2-p2"
+              - php_version: "7.4"
+                magento_version: "2.3.3"
+              - php_version: "7.4"
+                magento_version: "2.3.4-p2"
+              - php_version: "7.4"
+                magento_version: "2.3.5-p2"
+
+parameters:
+  trigger-workflows:
+    default: true
+    type: boolean
+  docker-ci-node-yarn2:
+    default: false
+    type: boolean
+  docker-ci-php:
+    default: false
+    type: boolean
+  docker-ci-magento:
+    default: false
+    type: boolean
+  swissknife_sha:
+    default: ""
+    type: string
