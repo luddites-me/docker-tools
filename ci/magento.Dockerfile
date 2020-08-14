@@ -9,7 +9,8 @@ ADD https://ns8-magento-installers.s3.amazonaws.com/Magento-CE-${MAGENTO_VERSION
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y default-mysql-server gnupg jq libicu-dev libjpeg-dev libpng-dev libxslt1-dev libzip-dev unzip wget
+    mkdir -p /usr/share/man/man1 && \
+    apt-get install -y chromium-driver cron default-mysql-server git gnupg jq libicu-dev libjpeg-dev libpng-dev libxslt1-dev libzip-dev openjdk-11-jre-headless unzip wget yarnpkg
 
 # PHP 7.4 replaced the `--with-jpeg-dir` option with `--with-jpeg`. We can use dpkg to compare semvers.
 RUN dpkg --compare-versions "$( php -i | grep PHP_VERSION | head -n1 | awk '{print $3}' )" gt 7.4 \

@@ -9,18 +9,18 @@ The `ci` directory contains Docker templates that will automatically generate a 
 
 These images are intended to be used by the [protect-sdk-php](https://github.com/ns8inc/protect-sdk-php) repo, which currently needs to support PHP 7.1 through 7.4.
 
-From the `ci` directory, run the following command and specify the PHP version number you want with `-p`:
+Run the following command and specify the PHP version number you want:
 ```
-$ yarn build:ns8-php -p 7.3
+$ docker build -t ns8-php:7.3 -f ci/php.Dockerfile --build-arg PHP_VERSION=7.3 ./ci
 ```
 
 ## Generating Magento images
 
-These images are intended to be used by the [protect-integration-magento](https://github.com/ns8inc/protect-integration-magento) repo, which currently needs to support PHP 7.1 through 7.3 and Magento 2.3.1 through 2.3.5-p1 (although not every version of PHP is supported by every version of Magento).
+These images are intended to be used by the [protect-integration-magento](https://github.com/ns8inc/protect-integration-magento) repo, which currently needs to support PHP 7.1 through 7.4 and Magento 2.3.0 through 2.4.0 (although not every version of PHP is supported by every version of Magento).
 
-From the `ci` directory, run the following command and specify the Magento version you want with `-m` and the PHP version number you want with `-p`:
+Run the following command and specify the PHP and Magento versions you want:
 ```
-$ yarn build:ns8-magento -m 2.3.4-p2 -p 7.2
+$ docker build -t ns8-magento:7.3-2.3.5-p2 -f ci/magento.Dockerfile --build-arg MAGENTO_VERSION=2.3.5-p2 --build-arg PHP_VERSION=7.3 ./ci
 ```
 
 ## Deploying the images
