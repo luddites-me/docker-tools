@@ -21,7 +21,7 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
 
  1. `APP_ENV`
   - default: `dev`
-  - must be set to `dev` currently
+  - must be set to `dev` currently, otherwise dev/test seed data migrations will not run (see implementation of `MigrationEnvironment` decorator in `ns8-protect-api`)
  2. `NO_DEBUG`
   - default: '' (empty)
   - if non-empty, the start script runs the compiled output without nodemon, ts-node or debugging enabled. This may be desired if you're not actively developing `protect-api`, since it could increase perf
