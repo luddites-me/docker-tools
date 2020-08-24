@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 # Setup Magento composer repo auth
 cd "${MAGENTO_INSTALL_DIR}"

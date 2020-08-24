@@ -2,7 +2,7 @@
 
 # This script just waits until we can hit protect-client and protect-api
 
-set -e
+set -euo pipefail
 
 
 if [ -z "${PROTECT_API_URL}" ] \

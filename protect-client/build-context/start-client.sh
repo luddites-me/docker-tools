@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 if [ "$(pwd)" != "/home/node" ]; then
   echo "This script assumes it's run by 'node' in '/home/node', not $(id) in $(pwd)"

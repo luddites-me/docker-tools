@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 # This allows us to override environment variables by updating `/etc/environment`
 # and then restarting the container, without needing to recreate the container.

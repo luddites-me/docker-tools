@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 if [ -z "${APP_ENV}" ] \
   || [ -z "${DYNAMODB_ENDPOINT_URL}" ]; then

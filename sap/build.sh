@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 S3_ARTIFACT_BUCKET="protect-docker-artifacts"
 S3_HYBRIS_URL="s3://$S3_ARTIFACT_BUCKET/hybris.zip"

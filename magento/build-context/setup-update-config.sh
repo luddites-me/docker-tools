@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
 if [ -z "${MAGENTO_BASE_URL}" ] \
   || [ -z "${PROTECT_API_URL}" ] \
@@ -24,7 +24,7 @@ if [ -d "${MAGENTO_INSTALL_DIR}/vendor/ns8/protect-sdk/assets/configuration" ]; 
           }' \
       < core_configuration.json.orig > core_configuration.json
   popd
-fi 
+fi
 CURRENT_BASE_URL=$($BIN_MAGENTO config:show web/secure/base_url)
 if [ "${CURRENT_BASE_URL}" != "${MAGENTO_BASE_URL}" ]; then
   $BIN_MAGENTO setup:store-config:set --base-url-secure="${MAGENTO_BASE_URL}"
