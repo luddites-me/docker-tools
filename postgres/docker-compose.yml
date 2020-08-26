@@ -1,0 +1,60 @@
+version: "3.7"
+
+services:
+  postgres:
+    command:
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/docker-entrypoint-initdb.d/server.cert
+      - -c
+      - ssl_key_file=/docker-entrypoint-initdb.d/server.key
+    depends_on:
+      - postgres_gencert
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_USERNAME: "${POSTGRES_USERNAME}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    # This version should match the version compatible w/ Aurora serverless
+    image: postgres:10.7
+    networks:
+      - protect
+    volumes:
+      - "postgres-init:/docker-entrypoint-initdb.d"
+      - "postgres-data:/var/lib/postgresql/data"
+
+  postgres_gencert:
+    build:
+      dockerfile: ../Dockerfile.cert.datacontainer
+      context: ${NS8_SRC}/protect-tools-docker/postgres/build-context
+    volumes:
+      - "postgres-init:/docker-entrypoint-initdb.d"
+      - "postgres-data:/var/lib/postgresql/data"
+
+  pgadmin:
+    depends_on:
+      - postgres
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - "pgadmin-data:/root/.pgadmin"
+    networks:
+      - protect
+
+  ngrok-pgadmin:
+    depends_on:
+      - pgadmin
+    environment:
+      NGROK_AUTH: "${NGROK_AUTH}"
+      NGROK_SUBDOMAIN: "${PGADMIN_SUBDOMAIN}"
+      NGROK_PORT: "pgadmin:80"
+    image: wernight/ngrok
+    networks:
+      - protect
+
+volumes:
+  pgadmin-data: {}
+  postgres-data: {}
+  postgres-init: {}

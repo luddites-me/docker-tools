@@ -5,6 +5,7 @@ set -o errexit
 SCRIPTDIR="$(dirname "$0")"
 
 declare -A VAR_NAME_TO_STACK_DIR_MAP
+VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_POSTGRES]="$(realpath "${SCRIPTDIR}/postgres")"
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_PROTECT_API]="$(realpath "${SCRIPTDIR}/protect-api")"
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_PROTECT_CLIENT]="$(realpath "${SCRIPTDIR}/protect-client")"
 VAR_NAME_TO_STACK_DIR_MAP[COMPOSE_TEMPLATE_SERVICE]="$(realpath "${SCRIPTDIR}/template-service")"

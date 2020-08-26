@@ -30,28 +30,25 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
   - if non-empty, include [`mysql`](../common/docker-compose.database.mysql.yml) in the stack
  4. `PROTECT_API_COMPOSE_POSTGRES`
   - default: '' (empty)
-  - if non-empty, include [`postgres`](../common/docker-compose.database.postgres.yml) in the stack
+  - if non-empty, check that [`postgres`](../postgres) is in the stack (i.e., `COMPOSE_POSTGRES` is defined)
 
     If this is non-empty, the `start-api` script will set the `dbConnection.type` to `postgres`, and also set the values from `POSTGRES_USERNAME` and `POSTGRES_PASSWORD`.
- 5. `PROTECT_API_COMPOSE_PGADMIN`
-  - default: '' (empty)
-  - if non-empty, include [`pgAdmin`](https://www.pgadmin.org/) in the stack; probably only useful/desired if `PROTECT_API_COMPOSE_POSTGRES` is also set
- 6. `PROTECT_API_NO_CONFIG_OVERRIDES`
+ 5. `PROTECT_API_NO_CONFIG_OVERRIDES`
   - default: '' (empty)
   - if non-empty, the `start-api` script will not override any settings in `config/${APP_ENV}.yml`, so all values must be set manually
- 7. `PROTECT_API_SUBDOMAIN`
+ 6. `PROTECT_API_SUBDOMAIN`
   - default: ${NGROK_SUBDOMAIN_PREFIX}-protect-api
   - the subdomain used used by ngrok to make the protect api accessible (you may want to [reserve](./overview.md#ngrok) ahead of time)
- 8. `PROTECT_API_URL`
+ 7. `PROTECT_API_URL`
   - default: https://${PROTECT_API_SUBDOMAIN}.ngrok.io/
   - this is used to override `ns8ApiHost` in `config/${APP_ENV}.yml`, and may also be referenced by other services when they're composed with `protect-api`.
- 9. `PROTECT_CLIENT_URL`
+ 8. `PROTECT_CLIENT_URL`
   - default: none
   - if non-empty, this is used to override `ns8FrontEndUrl` in `config/${APP_ENV}.yml`. If composing with `protect-client`, this will be set by that service by default
- 10. `TEMPLATE_SERVICE_URL`
+ 9. `TEMPLATE_SERVICE_URL`
   - default: none
   - if non-empty, this is used to override `ns8TemplateHostUrl` in `config/${APP_ENV}.yml`. If composing with `template-service`, this will be set by that service by default
- 11. `V1_API_SERVICE_URL`
+ 10. `V1_API_SERVICE_URL`
   - default: https://${V1_API_SERVICE_SUBDOMAIN}.ngrok.io/
   - this will override the ``v1Proxy.baseUrl`` url in `config/${APP_ENV}.yml`
 

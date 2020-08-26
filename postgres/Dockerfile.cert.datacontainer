@@ -1,0 +1,17 @@
+FROM nginx
+
+# Must match the postgres user id in the postgres image
+ARG POSTGRES_UID=999
+ARG POSTGRES_INIT_DIR=/docker-entrypoint-initdb.d
+
+RUN mkdir $POSTGRES_INIT_DIR && chown $POSTGRES_UID $POSTGRES_INIT_DIR
+
+USER $POSTGRES_UID
+
+RUN openssl req -nodes -new -x509 \
+    -keyout $POSTGRES_INIT_DIR/server.key -out $POSTGRES_INIT_DIR/server.cert \
+    -subj "/C=US/ST=Nevada/L=Vegas!/O=NS8 Inc/OU=Engineering/CN=www.example.com/emailAddress=no-reply@ns8.com"
+
+ADD check-certs-exist.sh $POSTGRES_INIT_DIR
+
+ENTRYPOINT ["/bin/echo", "SSL cert data container created"]

@@ -11,9 +11,8 @@ if [ -z "${PROTECT_API_COMPOSE_MYSQL}" ] && \
 fi
 
 if [ -n "${PROTECT_API_COMPOSE_POSTGRES}" ]; then
-  if [ -z "${POSTGRES_USERNAME}" ] || \
-    [ -z "${POSTGRES_PASSWORD}" ]; then
-    echo "Must set POSTGRES_USERNAME and POSTGRES_PASSWORD if PROTECT_API_COMPOSE_POSTGRES is set" 1>&2
+  if [ -z "${COMPOSE_POSTGRES}" ]; then
+    echo "Must set COMPOSE_POSTGRES if PROTECT_API_COMPOSE_POSTGRES is set" 1>&2
     exit 1
   fi
 fi
@@ -36,12 +35,6 @@ fi
 
 realpath "${SCRIPTDIR}/../common/docker-compose.network.yml"
 realpath "${SCRIPTDIR}/../common/docker-compose.database.dynamo.yml"
-if [ -n "${PROTECT_API_COMPOSE_PGADMIN}" ]; then
-    realpath "${SCRIPTDIR}/../common/docker-compose.pgadmin.yml"
-fi
-if [ -n "${PROTECT_API_COMPOSE_POSTGRES}" ]; then
-    realpath "${SCRIPTDIR}/../common/docker-compose.database.postgres.yml"
-fi
 if [ -n "${PROTECT_API_COMPOSE_MAILCATCHER}" ]; then
     echo "'PROTECT_API_COMPOSE_MAILCATCHER' Not Yet Implemented" 1>&2
 fi
