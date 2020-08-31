@@ -9,5 +9,6 @@ docker-compose \
   -f "./docker-compose.yml" \
   -f "../common/docker-compose.network.yml" \
   -f "../common/docker-compose.database.mysql.yml" \
+  -f "../kafka/docker-compose.yml" \
   -f "../protect-api/docker-compose.yml" \
   -f "../protect-client/docker-compose.yml" "$@"
