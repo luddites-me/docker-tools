@@ -33,6 +33,49 @@ git clone https://github.com/ns8inc/protect-tools-docker
 
 The above command will clone the repo into `protect-tools-docker`; it has to be cloned into that exact directory, as do all the other repos referenced by these scripts, or they won't work.
 
+
+### Quickstart
+
+For developers that already have all their accounts setup and repos checked out to `$NS8_SRC`, this section should get you going quickly.
+
+All parameters are set as environment variables; you can see the required env vars in [.env.schema](../.env.schema), and their defaults in [.env.defaults](../.env.defaults).  By default we include 3 services, as seen in `.env.defaults`:
+```
+COMPOSE_PROTECT_API=✅
+COMPOSE_PROTECT_CLIENT=✅
+COMPOSE_TEMPLATE_SERVICE=✅
+```
+
+First, run `yarn install` to get the `dotenv-expand` and `dotenv-extended` packages that we use to read the `.env` files.
+
+If you run `./compose-all.sh up -d` and there are any required env vars missing, it will complain:
+
+```sh
+$ ./compose-all.sh up -d
+~/src/protect-tools-docker/node_modules/dotenv-extended/lib/index.js:59
+      throw new Error('MISSING CONFIG VALUES: ' + missingKeys.join(', '));
+      ^
+
+Error: MISSING CONFIG VALUES: NGROK_SUBDOMAIN_PREFIX
+    ...
+```
+
+Set `NGROK_SUBDOMAIN_PREFIX` in `.env`, and you should be good to go:
+```
+$ echo 'NGROK_SUBDOMAIN_PREFIX=rockstar-dev' >> .env
+$ ./compose-all.sh up -d
+Creating network "protect_protect" with driver "bridge"
+Creating protect_protect-client_1         ... done
+Creating protect_mysql_1                  ... done
+Creating protect_dynamodb_1               ... done
+Creating protect_template-service_1 ... done
+Creating protect_ngrok-template-service_1 ... done
+Creating protect_protect-api_1            ... done
+Creating protect_ngrok-protect-api_1      ... done
+Creating protect_ngrok-protect-client_1   ... done
+```
+
+Now you have the protect-api, protect-client and template-service running in your stack.
+
 #### `ngrok`
 
 Services are generally exposed via `ngrok`, by starting a container running [ngrok](https://hub.docker.com/r/wernight/ngrok/) inside the `docker-compose` stack so that it has direct access to the stack's [network](https://docs.docker.com/compose/networking/#specify-custom-networks). To create these tunnels you need to set a "subdomain" for the tunnel, usually through an environment variable. Before setting the values, you may want to reserve the subdomain, just to ensure you don't run into issues starting the `ngrok` containers due to the specified subdomain being in use.
@@ -54,11 +97,11 @@ Many stacks in this repo require an `NGROK_AUTH` environment variable to be defi
 
 ## Composing Services with `compose-all.sh`
 
-The [`compose-all.sh`](../compose-all.sh) is used to compose multiple services in a single stack, and share configuration via environment variables across the services.
+The [`compose-all.sh`](../compose-all.sh) is used to compose multiple services in a single stack, and share configuration via environment variables across the services.  It's basically a thin wrapper around `docker-compose` that's just used to gather the `docker-compose.yml` files you want included in the stack and setup/validate environment variables.
 
-Depending on what you're working on, different services can be composed together by setting the `COMPOSE_PROTECT_[SERVICE]` variable for the service you want to include, and running the `compose-all.sh` script to invoke setup the environment and invoke `docker-compose` with the services indicated.
+Depending on what you're working on, different services can be composed together by setting the `COMPOSE_[SERVICE]` variable for the service you want to include, and running the `compose-all.sh` script to setup the environment and invoke `docker-compose` with the `.yml` files for the services indicated.
 
-The way this works is to associate a `COMPOSE_PROTECT_[SERVICE]` variable with each service directory (e.g., `COMPOSE_PROTECT_API` is associated with [`protect-api`](../protect-api)). Each "service directory" contains a script named `get-compose-services.sh`, which prints out the names of the .yml files to be passed to `docker-compose`. Additionally, the service directory can contain an `.env.schema` file to define environment variables that must be defined (`compose-all.sh` will fail with an error message if any are not), and an `.env.defaults` file to set default values for required environment variables. If you want values in `.env` or `.env.defaults` to override any values you already have in your environment, just set a variable named `ENVFILE_TAKES_PRECEDENCE`; by default, values already set in your environment take precedence.
+The way this works is to associate a `COMPOSE_[SERVICE]` variable with each service directory (e.g., `COMPOSE_PROTECT_API` is associated with [`protect-api`](../protect-api)). Each "service directory" contains a script named `get-compose-services.sh`, which prints out the names of the .yml files to be passed to `docker-compose`. Additionally, the service directory can contain an `.env.schema` file to define environment variables that must be defined (`compose-all.sh` will fail with an error message if any are not), and an `.env.defaults` file to set default values for required environment variables. If you want values in `.env` or `.env.defaults` to override any values you already have in your environment, just set a variable named `ENVFILE_TAKES_PRECEDENCE`; by default, values already set in your environment take precedence.
 
 Some care should be taken to not set the default value for the same environment variable in multiple "services", since the order the defaults are loaded in is arbitrary, and defaults are only applied in the case there is no value previously set (either pre-existing in the environment, or within the `.env` file). This means if a variable, e.g. `PROTECT_API_URL`, is optional, it should not be set to a default value of `''` in any service, since doing so can prevent it from being set to its real value later on. Instead, just leave the optional variable out of `.env.schema`, and document what happens if it is set.
 
@@ -66,7 +109,7 @@ Similarly, the services defined in each `docker-compose.yml` files should be dis
 
 ### Multiple stacks
 
-The `COMPOSE_PROJECT_NAME` variable is used as a prefix for all resources created by `docker-compose`, so it's an easy way maintain containers and volumes for multiple stacks separately.  E.g., you can run `compose-all.sh down`, then update `COMPOSE_PROJECT_NAME` to some other value, and when you run `compose-all.sh up` will create all new containers and volumes, and your older containers and data will be left in tact in case you want to start them up again by setting `COMPOSE_PROJECT_NAME` back to its original value.  This makes it relatively easy to maintain stacks of different combinations by just keeping separate `.env.some-stack` files, and linking `.env` to the stack you want active.
+The `COMPOSE_PROJECT_NAME` variable is used as a prefix for all resources created by `docker-compose`, so it's an easy way maintain containers and volumes for multiple stacks separately.  E.g., you can run `./compose-all.sh down`, then update `COMPOSE_PROJECT_NAME` to some other value, and when you run `./compose-all.sh up` will create all new containers and volumes, and your older containers and data will be left intact in case you want to start them up again by setting `COMPOSE_PROJECT_NAME` back to its original value.  This makes it relatively easy to maintain stacks of different combinations by just keeping separate `.env.some-stack` files, and linking `.env` to the stack you want active.
 
 ## `docker-compose` from 10,000'
 
@@ -90,7 +133,7 @@ Print all logs (stdout) from the associated service.
 
 1. `docker-compose exec <service-name> <command>`
 
-Run `<command>` inside the `<service-name>` container.  For example, to start a shell inside the container for `protect-api`, you'd run something like `./compose.sh exec protect-api /bin/bash`.
+Run `<command>` inside the `<service-name>` container.  For example, to start a shell inside the container for `protect-api`, you'd run something like `./compose-all.sh exec protect-api /bin/bash`.
 
 ### Composition with `docker-compose`
 
