@@ -8,6 +8,10 @@ Before running any of this you need [the basic setup](./overview.md#setup).
 
 This container will run the protect API along with `mysql` or `postgres` and `dynamodb`. The configuration for the `protect-api` is primarily in `$NS8_SRC/ns8-protect-api/config/${APP_ENV}.yml`, *just like when you're running it locally, outside of docker*, but the [`start-api` script](../protect-api/build-context/start-api.sh) will override certain settings to what they should be for this environment.
 
+### AWS Profile
+
+The `docker-compose.yml` file maps `~/.aws` into the container, and sets `AWS_PROFILE=current_profile`.  This makes it easy to work with the [aws-mfa ohmyzsh plugin](https://github.com/joepjoosten/aws-cli-mfa-oh-my-zsh), but it doesn't require that; as long as `current_profile` is a valid profile name with keys that provide the access the protect API needs, things should work.  If you are using the plugin, just run `aws-mfa ns8-development` in a shell before running `./compose-all.sh up -d`, and you're good to go.  When the tokens timeout, you'll need to authenticate again and restart the API (`./compose-all.sh restart protect-api`); there's a script called [`./update-mfa-and-restart-api.sh`](../update-mfa-and-restart-api.sh) that does this for convenience (just make sure the `aws-get-creds` script from that plugin is in your path).
+
 ### Getting the source
 
 ```bash
