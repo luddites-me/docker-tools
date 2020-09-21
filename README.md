@@ -1,4 +1,4 @@
-# protect-tools-docker
+# docker-tools
 
 Docker images for use in testing Protect
 

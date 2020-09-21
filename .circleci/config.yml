@@ -20,10 +20,10 @@ commands:
       - run:
           name: 🔓 Login to Docker Registry 🔓
           command: |
-            echo "${NS8_GLOBAL_REGISTRY_PASSWORD}" | docker login \
-              --username ${NS8_GLOBAL_REGISTRY_USERNAME} \
+            echo "${LUDDITES_GLOBAL_REGISTRY_PASSWORD}" | docker login \
+              --username ${LUDDITES_GLOBAL_REGISTRY_USERNAME} \
               --password-stdin \
-              ${NS8_GLOBAL_REGISTRY_HOSTNAME}
+              ${LUDDITES_GLOBAL_REGISTRY_HOSTNAME}
       - run:
           name: 🐳 Build Docker image 🐳
           command: << parameters.build_command >>
@@ -126,7 +126,7 @@ workflows:
     jobs:
       - docker-ci-node-yarn2:
           context: org-global
-          tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/node-yarn2
+          tag_name: ${LUDDITES_GLOBAL_REGISTRY_HOSTNAME}/luddites/cimg/node-yarn2
           matrix:
             parameters:
               version: ["10.21", "12.18", "14.5"]
@@ -135,7 +135,7 @@ workflows:
     jobs:
       - docker-ci-php:
           context: org-global
-          tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/php
+          tag_name: ${LUDDITES_GLOBAL_REGISTRY_HOSTNAME}/luddites/cimg/php
           matrix:
             parameters:
               version: ["7.1", "7.2", "7.3", "7.4"]
@@ -144,7 +144,7 @@ workflows:
     jobs:
       - docker-ci-magento:
           context: org-global
-          tag_name: ${NS8_GLOBAL_REGISTRY_HOSTNAME}/ns8/cimg/magento
+          tag_name: ${LUDDITES_GLOBAL_REGISTRY_HOSTNAME}/luddites/cimg/magento
           matrix:
             parameters:
               magento_version: ["2.3.0", "2.3.1", "2.3.2-p2", "2.3.3", "2.3.4-p2", "2.3.5-p2", "2.4.0"]

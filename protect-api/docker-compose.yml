@@ -4,7 +4,7 @@ services:
   protect-api:
     build:
       dockerfile: ../Dockerfile
-      context: ${NS8_SRC}/protect-tools-docker/protect-api/build-context
+      context: ${LUDDITES_SRC}/docker-tools/protect-api/build-context
     depends_on:
       - mysql
       - dynamodb
@@ -18,7 +18,7 @@ services:
       POSTGRES_USERNAME: "${POSTGRES_USERNAME:-}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-}"
       DYNAMODB_ENDPOINT_URL: "http://dynamodb:8000"
-      # ns8-protect-api expected env vars
+      # luddites-api expected env vars
       APP_ENV: ${APP_ENV}
       # start with or without nodemon and debugger
       NO_DEBUG: ${NO_DEBUG:-}
@@ -40,7 +40,7 @@ services:
       # TODO: potentially use localstack for SSM/S3/Lambda
       - "~/.aws/:/home/node/.aws:ro"
       - "~/.npmrc/:/home/node/.npmrc:ro"
-      - "${NS8_SRC}/ns8-protect-api:/home/node/ns8-protect-api"
+      - "${LUDDITES_SRC}/luddites-api:/home/node/luddites-api"
 
   ngrok-protect-api:
     depends_on:

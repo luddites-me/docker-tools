@@ -26,7 +26,7 @@ services:
   postgres_gencert:
     build:
       dockerfile: ../Dockerfile.cert.datacontainer
-      context: ${NS8_SRC}/protect-tools-docker/postgres/build-context
+      context: ${LUDDITES_SRC}/docker-tools/postgres/build-context
     volumes:
       - "postgres-init:/docker-entrypoint-initdb.d"
       - "postgres-data:/var/lib/postgresql/data"

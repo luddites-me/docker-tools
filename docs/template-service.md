@@ -1,22 +1,22 @@
 ## Overview
 
-The `template-service` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [tempalte service](https://github.com/ns8inc/ns8-template-service).
+The `template-service` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [tempalte service](https://github.com/luddites-me/luddites-template-service).
 
 ## Setup
 
 Before running any of this you need [the basic setup](./overview.md#setup).
 
-Also see the [template service overview](https://ns8.slab.com/posts/template-service-wvw7lxi8).
+Also see the [template service overview](https://luddites.slab.com/posts/template-service-wvw7lxi8).
 
 If `PROTECT_API_URL` is defined (as it is automatically when composing with `protect-api`), the [`tart-template-service` script](../template-service/build-context/start-template-service.sh) will set `V2_API_BASE` appropriately before starting the service.
 
-Whten this service is composed with `protect-api`, it will define `TEMPLATE_SERVICE_URL` and `protect-api` will use that value for `ns8TemplateHostUrl` by default.
+Whten this service is composed with `protect-api`, it will define `TEMPLATE_SERVICE_URL` and `protect-api` will use that value for `ludditesTemplateHostUrl` by default.
 
 ### Getting the source
 
 ```bash
-cd $NS8_SRC
-git clone https://github.com/ns8inc/ns8-template-service
+cd $LUDDITES_SRC
+git clone https://github.com/luddites-me/luddites-template-service
 ```
 
 ### Configuration
@@ -38,7 +38,7 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
 The main service is `template-service`:
 
 ```bash
-$ cd $NS8_SRC/protect-tools-docker
+$ cd $LUDDITES_SRC/docker-tools
 $ # Start all services/containers in the stack:
 $ ./compose.sh up -d
 # Follow the logs from the template-service:

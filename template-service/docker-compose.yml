@@ -4,7 +4,7 @@ services:
   template-service:
     build:
       dockerfile: ../Dockerfile
-      context: ${NS8_SRC}/protect-tools-docker/template-service/build-context
+      context: ${LUDDITES_SRC}/docker-tools/template-service/build-context
     environment:
       PROTECT_API_URL: ${PROTECT_API_URL}
       PROXY_BASE: "https://${TEMPLATE_SERVICE_SUBDOMAIN}.ngrok.io/proxy"
@@ -12,7 +12,7 @@ services:
       - protect
     volumes:
       - "~/.npmrc/:/home/node/.npmrc:ro"
-      - "${NS8_SRC}/ns8-template-service:/home/node/ns8-template-service"
+      - "${LUDDITES_SRC}/luddites-template-service:/home/node/luddites-template-service"
 
   ngrok-template-service:
     depends_on:

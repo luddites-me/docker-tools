@@ -13,9 +13,9 @@ if [ "${INSTALL_DEV_MODULE}" = "true" ]; then
   echo "Loading the protect module from the filesystem"
   PROTECT_VERSION=$(cat "${MODULE_SRC}/composer.json" | jq -r .version)
   ${BIN_COMPOSER} config repositories.1 path $MODULE_SRC
-  ${BIN_COMPOSER} require --prefer-source ns8/protect-magento:${PROTECT_VERSION}@dev
+  ${BIN_COMPOSER} require --prefer-source luddites/protect-magento:${PROTECT_VERSION}@dev
 else
-  ${BIN_COMPOSER} require ns8/protect-magento
+  ${BIN_COMPOSER} require luddites/protect-magento
 fi
 
 

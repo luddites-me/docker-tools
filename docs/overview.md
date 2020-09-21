@@ -1,11 +1,11 @@
 
 # Protect Docker Tools Overview
 
-This repo contains [Docker Compose](https://docs.docker.com/compose/) stacks for various parts of the NS8 Protect stack.
+This repo contains [Docker Compose](https://docs.docker.com/compose/) stacks for various parts of the LUDDITES Protect stack.
 
 ## Setup
 
-Before using the stacks in the repo you need several tools and accounts setup; the easiest way to make sure all this has been completed is by following the [Setup - Getting Started](https://ns8.slab.com/posts/setup-getting-started-sph7gsfr) document in Slab.
+Before using the stacks in the repo you need several tools and accounts setup; the easiest way to make sure all this has been completed is by following the [Setup - Getting Started](https://luddites.slab.com/posts/setup-getting-started-sph7gsfr) document in Slab.
 
 ### Mac
 
@@ -18,25 +18,25 @@ brew install bash coreutils
 
 ### Environment
 
-The scripts in this repo expect the various NS8 repositories to be checked out to a single directory, and the `NS8_SRC` environment variable is used to reference that directory. Either set the path manually in the .env file, or if using the same path universally, remove the key from the .env file and set `NS8_SRC` environment variable in a file like `~/.zshrc` or `~/.bashrc` (don't forget to `source` the file after you save it):
+The scripts in this repo expect the various LUDDITES repositories to be checked out to a single directory, and the `LUDDITES_SRC` environment variable is used to reference that directory. Either set the path manually in the .env file, or if using the same path universally, remove the key from the .env file and set `LUDDITES_SRC` environment variable in a file like `~/.zshrc` or `~/.bashrc` (don't forget to `source` the file after you save it):
 
 ```bash
-export NS8_SRC=~/src
+export LUDDITES_SRC=~/src
 ```
 
 Also, all repos must be checked out to a directory that matches the repo name, e.g:
 
 ```bash
-cd $NS8_SRC
-git clone https://github.com/ns8inc/protect-tools-docker
+cd $LUDDITES_SRC
+git clone https://github.com/luddites-me/docker-tools
 ```
 
-The above command will clone the repo into `protect-tools-docker`; it has to be cloned into that exact directory, as do all the other repos referenced by these scripts, or they won't work.
+The above command will clone the repo into `docker-tools`; it has to be cloned into that exact directory, as do all the other repos referenced by these scripts, or they won't work.
 
 
 ### Quickstart
 
-For developers that already have all their accounts setup and repos checked out to `$NS8_SRC`, this section should get you going quickly.
+For developers that already have all their accounts setup and repos checked out to `$LUDDITES_SRC`, this section should get you going quickly.
 
 All parameters are set as environment variables; you can see the required env vars in [.env.schema](../.env.schema), and their defaults in [.env.defaults](../.env.defaults).  By default we include 3 services, as seen in `.env.defaults`:
 ```
@@ -51,7 +51,7 @@ If you run `./compose-all.sh up -d` and there are any required env vars missing,
 
 ```sh
 $ ./compose-all.sh up -d
-~/src/protect-tools-docker/node_modules/dotenv-extended/lib/index.js:59
+~/src/docker-tools/node_modules/dotenv-extended/lib/index.js:59
       throw new Error('MISSING CONFIG VALUES: ' + missingKeys.join(', '));
       ^
 
@@ -93,7 +93,7 @@ To Reserve an `ngrok` subdomain:
 
 - Click `Reserve`.
 
-Many stacks in this repo require an `NGROK_AUTH` environment variable to be defined (obtained from ngrok's [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken) page, or if you've already setup ngrok locally, you can retrieve your auth token from `~/.ngrok2/ngrok.yml`). Also, default values for `ngrok` subdomains are commonly built from a `NGROK_SUBDOMAIN_PREFIX` environment variable (e.g., `NGROK_SUBDOMAIN_PREFIX=ns8-devname` will result in `protect-api` being served from `https://ns8-devname-protect-api.ngrok.io` by default).
+Many stacks in this repo require an `NGROK_AUTH` environment variable to be defined (obtained from ngrok's [Your Authtoken](https://dashboard.ngrok.com/auth/your-authtoken) page, or if you've already setup ngrok locally, you can retrieve your auth token from `~/.ngrok2/ngrok.yml`). Also, default values for `ngrok` subdomains are commonly built from a `NGROK_SUBDOMAIN_PREFIX` environment variable (e.g., `NGROK_SUBDOMAIN_PREFIX=luddites-devname` will result in `protect-api` being served from `https://luddites-devname-protect-api.ngrok.io` by default).
 
 ## Composing Services with `compose-all.sh`
 

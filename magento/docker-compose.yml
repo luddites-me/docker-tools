@@ -4,31 +4,31 @@ services:
   magento:
     build:
       dockerfile: ../Dockerfile
-      context: ${NS8_SRC}/protect-tools-docker/magento/build-context
+      context: ${LUDDITES_SRC}/docker-tools/magento/build-context
       args:
         BUILD_ENABLE_XDEBUG: $BUILD_ENABLE_XDEBUG
     depends_on:
       - mysql
     environment:
       - "MAGENTO_BASE_URL=${MAGENTO_BASE_URL}"
-      - "PROTECT_API_URL=https://test-protect.ns8.com"
-      - "PROTECT_CLIENT_URL=https://test-protect-client.ns8.com"
+      - "PROTECT_API_URL=https://test-protect.luddites.me"
+      - "PROTECT_CLIENT_URL=https://test-protect-client.luddites.me"
       - "MODULE_SRC=${MODULE_SRC:-/var/www/html/protect-integration-module}"
       - "INSTALL_MODULE=${INSTALL_MODULE:-true}"
       - "INSTALL_DATA=${INSTALL_DATA:-false}"
       - "INSTALL_DEV_MODULE=${INSTALL_DEV_MODULE:-true}"
-      - "BACKOFFICE_PATH=${BACKOFFICE_PATH:-ns8_admin}"
+      - "BACKOFFICE_PATH=${BACKOFFICE_PATH:-luddites_admin}"
       - "BACKOFFICE_USERNAME=${BACKOFFICE_USERNAME:-admin}"
       - "BACKOFFICE_PASSWORD=${BACKOFFICE_PASSWORD:-magento-admin-pw-1!}"
       - "MYSQL_USER=${MYSQL_USER-magento_db_user}"
       - "MYSQL_PASSWORD=${MYSQL_PASSWORD-magento_db_password}"
       - "MYSQL_DATABASE=${MYSQL_DATABASE-magento2}"
     volumes:
-      - ${NS8_SRC}/protect-tools-docker/magento/build-context
+      - ${LUDDITES_SRC}/docker-tools/magento/build-context
       # Map the module source so that changes made on the host are seen inside the container
-      - "${NS8_SRC}/protect-integration-magento/:${MODULE_SRC:-/var/www/html/protect-integration-module}"
+      - "${LUDDITES_SRC}/protect-integration-magento/:${MODULE_SRC:-/var/www/html/protect-integration-module}"
       # Map the .env file so that changes can take effect without recreating the container
-      - "${NS8_SRC}/protect-tools-docker/magento/.env:/etc/environment"
+      - "${LUDDITES_SRC}/docker-tools/magento/.env:/etc/environment"
 
   ngrok-magento:
     image: wernight/ngrok

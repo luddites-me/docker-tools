@@ -1,10 +1,10 @@
 {
-  "name": "protect-tools-docker",
+  "name": "docker-tools",
   "version": "1.0.0",
-  "description": "Tools to run protect in a docker compose stack",
-  "repository": "https://github.com/ns8inc/protect-tools-docker.git",
-  "author": "ns8inc",
-  "license": "UNLICENSED",
+  "description": "Tools to configure a docker compose stack",
+  "repository": "https://github.com/luddites-me/docker-tools.git",
+  "author": "Christopher Froehlich",
+  "license": "The Unlicense",
   "private": true,
   "dependencies": {
     "cross-spawn": "^7.0.3",

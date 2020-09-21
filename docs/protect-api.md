@@ -1,22 +1,22 @@
 ## Overview
 
-The `protect-api` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [Protect API](https://github.com/ns8inc/ns8-protect-api).
+The `protect-api` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [Protect API](https://github.com/luddites-me/luddites-api).
 
 ## Setup
 
 Before running any of this you need [the basic setup](./overview.md#setup).
 
-This container will run the protect API along with `mysql` or `postgres` and `dynamodb`. The configuration for the `protect-api` is primarily in `$NS8_SRC/ns8-protect-api/config/${APP_ENV}.yml`, *just like when you're running it locally, outside of docker*, but the [`start-api` script](../protect-api/build-context/start-api.sh) will override certain settings to what they should be for this environment.
+This container will run the protect API along with `mysql` or `postgres` and `dynamodb`. The configuration for the `protect-api` is primarily in `$LUDDITES_SRC/luddites-api/config/${APP_ENV}.yml`, *just like when you're running it locally, outside of docker*, but the [`start-api` script](../protect-api/build-context/start-api.sh) will override certain settings to what they should be for this environment.
 
 ### AWS Profile
 
-The `docker-compose.yml` file maps `~/.aws` into the container, and sets `AWS_PROFILE=current_profile`.  This makes it easy to work with the [aws-mfa ohmyzsh plugin](https://github.com/joepjoosten/aws-cli-mfa-oh-my-zsh), but it doesn't require that; as long as `current_profile` is a valid profile name with keys that provide the access the protect API needs, things should work.  If you are using the plugin, just run `aws-mfa ns8-development` in a shell before running `./compose-all.sh up -d`, and you're good to go.  When the tokens timeout, you'll need to authenticate again and restart the API (`./compose-all.sh restart protect-api`); there's a script called [`./update-mfa-and-restart-api.sh`](../update-mfa-and-restart-api.sh) that does this for convenience (just make sure the `aws-get-creds` script from that plugin is in your path).
+The `docker-compose.yml` file maps `~/.aws` into the container, and sets `AWS_PROFILE=current_profile`.  This makes it easy to work with the [aws-mfa ohmyzsh plugin](https://github.com/joepjoosten/aws-cli-mfa-oh-my-zsh), but it doesn't require that; as long as `current_profile` is a valid profile name with keys that provide the access the protect API needs, things should work.  If you are using the plugin, just run `aws-mfa luddites-development` in a shell before running `./compose-all.sh up -d`, and you're good to go.  When the tokens timeout, you'll need to authenticate again and restart the API (`./compose-all.sh restart protect-api`); there's a script called [`./update-mfa-and-restart-api.sh`](../update-mfa-and-restart-api.sh) that does this for convenience (just make sure the `aws-get-creds` script from that plugin is in your path).
 
 ### Getting the source
 
 ```bash
-$ cd $NS8_SRC
-$ git clone https://github.com/ns8inc/ns8-protect-api
+$ cd $LUDDITES_SRC
+$ git clone https://github.com/luddites-me/luddites-api
 ```
 
 ### Configuration
@@ -25,7 +25,7 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
 
  1. `APP_ENV`
   - default: `dev`
-  - must be set to `dev` currently, otherwise dev/test seed data migrations will not run (see implementation of `MigrationEnvironment` decorator in `ns8-protect-api`)
+  - must be set to `dev` currently, otherwise dev/test seed data migrations will not run (see implementation of `MigrationEnvironment` decorator in `luddites-api`)
  2. `NO_DEBUG`
   - default: '' (empty)
   - if non-empty, the start script runs the compiled output without nodemon, ts-node or debugging enabled. This may be desired if you're not actively developing `protect-api`, since it could increase perf
@@ -45,13 +45,13 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
   - the subdomain used used by ngrok to make the protect api accessible (you may want to [reserve](./overview.md#ngrok) ahead of time)
  7. `PROTECT_API_URL`
   - default: https://${PROTECT_API_SUBDOMAIN}.ngrok.io/
-  - this is used to override `ns8ApiHost` in `config/${APP_ENV}.yml`, and may also be referenced by other services when they're composed with `protect-api`.
+  - this is used to override `ludditesApiHost` in `config/${APP_ENV}.yml`, and may also be referenced by other services when they're composed with `protect-api`.
  8. `PROTECT_CLIENT_URL`
   - default: none
-  - if non-empty, this is used to override `ns8FrontEndUrl` in `config/${APP_ENV}.yml`. If composing with `protect-client`, this will be set by that service by default
+  - if non-empty, this is used to override `ludditesFrontEndUrl` in `config/${APP_ENV}.yml`. If composing with `protect-client`, this will be set by that service by default
  9. `TEMPLATE_SERVICE_URL`
   - default: none
-  - if non-empty, this is used to override `ns8TemplateHostUrl` in `config/${APP_ENV}.yml`. If composing with `template-service`, this will be set by that service by default
+  - if non-empty, this is used to override `ludditesTemplateHostUrl` in `config/${APP_ENV}.yml`. If composing with `template-service`, this will be set by that service by default
  10. `V1_API_SERVICE_URL`
   - default: https://${V1_API_SERVICE_SUBDOMAIN}.ngrok.io/
   - this will override the ``v1Proxy.baseUrl`` url in `config/${APP_ENV}.yml`
@@ -63,7 +63,7 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
 The main service is `protect-api`:
 
 ```bash
-$ cd $NS8_SRC/protect-tools-docker
+$ cd $LUDDITES_SRC/docker-tools
 $ # Start all services/containers in the stack:
 $ ./compose-all.sh up -d
 # Follow the logs from the protect API:
@@ -80,15 +80,15 @@ The `node` debugger for `protect-api` is bound to the host at port `9229`.
 
 There's a `vs code` debug configuration in this project that can be used to connect attach to the protect api.
 
-In case any `.ts` file in `ns8-protect-api/src` is changed, `nodemon` should restart the protect api.
+In case any `.ts` file in `luddites-api/src` is changed, `nodemon` should restart the protect api.
 
 You can run `mocha` inside the container:
 
 ```bash
-$ cd $NS8_SRC/protect-tools-docker
+$ cd $LUDDITES_SRC/docker-tools
 $ ./compose.sh up -d
 # Get a shell inside the container:
 $ ./compose.sh exec protect-api /bin/bash
-(container shell) $ cd ns8-protect-api
+(container shell) $ cd luddites-api
 (container shell) $ yarn test
 ```

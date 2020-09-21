@@ -4,7 +4,7 @@ services:
   v1-api-service:
     build:
       dockerfile: ../Dockerfile
-      context: ${NS8_SRC}/protect-tools-docker/v1-api-service/build-context
+      context: ${LUDDITES_SRC}/docker-tools/v1-api-service/build-context
     environment:
       APP_ENV: "dev"
       MONGO_PORT: "${MONGO_PORT}"
@@ -18,7 +18,7 @@ services:
       - "53333:3333"
     volumes:
       - "~/.npmrc/:/home/node/.npmrc:ro"
-      - "${NS8_SRC}/ns8-api-host:/home/node/ns8-api-host"
+      - "${LUDDITES_SRC}/luddites-api-host:/home/node/luddites-api-host"
 
   ngrok-v1-api-service:
     depends_on:

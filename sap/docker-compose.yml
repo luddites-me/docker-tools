@@ -9,4 +9,4 @@ services:
       - protect
     volumes:
       # Map local.properties
-      - "${NS8_SRC}/protect-tools-docker/sap/local.properties:/hybris/hybris/config/local.properties"
+      - "${LUDDITES_SRC}/docker-tools/sap/local.properties:/hybris/hybris/config/local.properties"

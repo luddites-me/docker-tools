@@ -7,7 +7,7 @@ if [ "$(pwd)" != "/home/node" ]; then
   exit 1
 fi
 
-cd ./ns8-api-host
+cd ./luddites-api-host
 # Install dependencies
 yarn install
 

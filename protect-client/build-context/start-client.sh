@@ -13,7 +13,7 @@ if [ -n "${PROTECT_API_URL}" ]; then
   export V2_API_BASE
 fi
 
-cd ./ns8-protect-client
+cd ./luddites-client
 
 pushd middleware
   # Nice for logging middleware output
@@ -26,4 +26,3 @@ popd
 cd client
 yarn install
 yarn start
-

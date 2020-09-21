@@ -55,17 +55,17 @@ if [ -z "${PROTECT_API_NO_CONFIG_OVERRIDES}" ]; then
   echo "Setting 'dynamoEndpoint' to '${DYNAMODB_ENDPOINT_URL}'"
   CONFIG_OVERRIDE_OPTS+=("dynamoEndpoint=${DYNAMODB_ENDPOINT_URL}")
 
-  echo "Setting 'ns8ApiHost' to '${PROTECT_API_URL}'"
-  CONFIG_OVERRIDE_OPTS+=("ns8ApiHost=${PROTECT_API_URL}")
+  echo "Setting 'ludditesApiHost' to '${PROTECT_API_URL}'"
+  CONFIG_OVERRIDE_OPTS+=("ludditesApiHost=${PROTECT_API_URL}")
 
   if [ -n "${PROTECT_CLIENT_URL}" ]; then
-    echo "Setting 'ns8FrontEndUrl' to '${PROTECT_CLIENT_URL}'"
-    CONFIG_OVERRIDE_OPTS+=("ns8FrontEndUrl=${PROTECT_CLIENT_URL}")
+    echo "Setting 'ludditesFrontEndUrl' to '${PROTECT_CLIENT_URL}'"
+    CONFIG_OVERRIDE_OPTS+=("ludditesFrontEndUrl=${PROTECT_CLIENT_URL}")
   fi
 
   if [ -n "${TEMPLATE_SERVICE_URL}" ]; then
-    echo "Setting 'ns8TemplateHostUrl' to ${TEMPLATE_SERVICE_URL}"
-    CONFIG_OVERRIDE_OPTS+=("ns8TemplateHostUrl=${TEMPLATE_SERVICE_URL}")
+    echo "Setting 'ludditesTemplateHostUrl' to ${TEMPLATE_SERVICE_URL}"
+    CONFIG_OVERRIDE_OPTS+=("ludditesTemplateHostUrl=${TEMPLATE_SERVICE_URL}")
   fi
 
   if [ -n "${V1_API_SERVICE_URL}" ]; then
@@ -75,7 +75,7 @@ if [ -z "${PROTECT_API_NO_CONFIG_OVERRIDES}" ]; then
 fi
 
 
-cd ./ns8-protect-api
+cd ./luddites-api
 # Install dependencies
 if [ -d node_modules ]; then
   echo "WARNING: 'node_modules' already exists"

@@ -1,12 +1,12 @@
 ## Overview
 
-The `v1-api-service` directory contains a `docker-compose` stack to enable docker-based testing and debugging (coming soon) for the [V1 API](https://github.com/ns8inc/ns8-api-host).
+The `v1-api-service` directory contains a `docker-compose` stack to enable docker-based testing and debugging (coming soon) for the [V1 API](https://github.com/luddites-me/luddites-api-host).
 
 ## tl;dr
 
-1. Become famililar with the stuff in this repo. (especally NS8_SRC, dir structure and other env variables)
-1. Checkout the code from here: `https://github.com/ns8inc/ns8-api-host` into here: `$NS8_SRC/`
-1. Go to dir `$NS8_SRC/protect-tools-docker`
+1. Become famililar with the stuff in this repo. (especally LUDDITES_SRC, dir structure and other env variables)
+1. Checkout the code from here: `https://github.com/luddites-me/luddites-api-host` into here: `$LUDDITES_SRC/`
+1. Go to dir `$LUDDITES_SRC/docker-tools`
 1. Set `COMPOSE_V1_API_SERVICE` to `true` in a newly created or existing `.env`
 1. Make sure you have set `NGROK_SUBDOMAIN_PREFIX` (suggestions: `<your-first-initial><your-last-name>-local`) in the .env file
 1. Run `./compose-all.sh up -d`
@@ -18,7 +18,7 @@ The `v1-api-service` directory contains a `docker-compose` stack to enable docke
 
 Before running any of this you need [the basic setup](./overview.md#setup).
 
-This container will run the V1 API along with a local `mongodb` if set. This docker compose guide does not (yet) go through setting it up to run using the test mongodb cluster in aws using ssh, for that see the readme in the [ns8-api-host github repo](https://github.com/ns8inc/ns8-api-host/readme.md).
+This container will run the V1 API along with a local `mongodb` if set. This docker compose guide does not (yet) go through setting it up to run using the test mongodb cluster in aws using ssh, for that see the readme in the [luddites-api-host github repo](https://github.com/luddites-me/luddites-api-host/readme.md).
 
 This docker compose will start up a local instance of mongodb and add a set of all "fake" credentials into the `administration` database, in the `options` collection, as the v1-api expects to find at startup. This is only run once on first start of the mongoDB container, so to change later, would need to manually update in mongo directly or remove the mongodatadb volume.
 
@@ -26,13 +26,13 @@ This docker compose will start up a local instance of mongodb and add a set of a
 
 The v1 api requires access to minFraud to score an order. This could be worked around by using the mongodb test cluster via ssh, or setting the minFraud apiKey in the `administration.options` encrypted collection.
 
-If testing the local instance on an actual storefront where scoring is needed via the truestats script, follow the instructions on the [ns8-api-host readme](https://github.com/ns8inc/ns8-api-host/readme.md) section under `/web/push` to change the values of `cdnScriptHost` and `processorHost` in the `settings.ts` file, to the value of the ngrok (or other) access method to your local env.
+If testing the local instance on an actual storefront where scoring is needed via the truestats script, follow the instructions on the [luddites-api-host readme](https://github.com/luddites-me/luddites-api-host/readme.md) section under `/web/push` to change the values of `cdnScriptHost` and `processorHost` in the `settings.ts` file, to the value of the ngrok (or other) access method to your local env.
 
 ### Getting the source
 
 ```bash
-$ cd $NS8_SRC
-$ git clone https://github.com/ns8inc/ns8-api-host
+$ cd $LUDDITES_SRC
+$ git clone https://github.com/luddites-me/luddites-api-host
 ```
 
 ### Configuration
@@ -54,7 +54,7 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
 The main service is `v1-api-service`:
 
 ```bash
-$ cd $NS8_SRC/protect-tools-docker
+$ cd $LUDDITES_SRC/docker-tools
 $ # Start all services/containers in the stack:
 $ ./compose-all.sh up -d
 # Follow the logs from the v1 service:

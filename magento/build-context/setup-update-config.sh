@@ -8,8 +8,8 @@ if [ -z "${MAGENTO_BASE_URL}" ] \
   echo "Must define MAGENTO_BASE_URL, PROTECT_API_URL and PROTECT_CLIENT_URL"
   exit 1
 fi
-if [ -d "${MAGENTO_INSTALL_DIR}/vendor/ns8/protect-sdk/assets/configuration" ]; then
-  pushd  ${MAGENTO_INSTALL_DIR}/vendor/ns8/protect-sdk/assets/configuration
+if [ -d "${MAGENTO_INSTALL_DIR}/vendor/luddites/protect-sdk/assets/configuration" ]; then
+  pushd  ${MAGENTO_INSTALL_DIR}/vendor/luddites/protect-sdk/assets/configuration
     cp core_configuration.json core_configuration.json.orig
     jq --arg apiUrl "${PROTECT_API_URL}" \
       --arg clientUrl "${PROTECT_CLIENT_URL}" \

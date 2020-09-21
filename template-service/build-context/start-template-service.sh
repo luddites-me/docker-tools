@@ -13,7 +13,7 @@ if [ -n "${PROTECT_API_URL}" ]; then
   export V2_API_BASE
 fi
 
-cd ./ns8-template-service
+cd ./luddites-template-service
 
 yarn global add pino-pretty
 yarn install

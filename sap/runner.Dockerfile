@@ -18,6 +18,6 @@ WORKDIR /hybris
 
 ARG INITIAL_ADMIN_PASSWORD=nimda
 
-RUN sh ./installer/install.sh -r b2c_acc_plus_ns8 initialize -A initAdminPassword=$INITIAL_ADMIN_PASSWORD
+RUN sh ./installer/install.sh -r b2c_acc_plus_luddites initialize -A initAdminPassword=$INITIAL_ADMIN_PASSWORD
 
-CMD sh ./installer/install.sh -r b2c_acc_plus_ns8 start
+CMD sh ./installer/install.sh -r b2c_acc_plus_luddites start

@@ -1,20 +1,20 @@
 ## Overview
 
-The `protect-client` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [Protect client](https://github.com/ns8inc/ns8-protect-client).
+The `protect-client` directory contains a `docker-compose` stack to enable docker-based testing and debugging for the [Protect client](https://github.com/luddites-me/luddites-client).
 
 ## Setup
 
 Before running any of this you need [the basic setup](./overview.md#setup).
 
-This container will run both the middleware and the webpack dev server for the client.  
+This container will run both the middleware and the webpack dev server for the client.
 
 If `PROTECT_API_URL` is defined (as it is automatically when composing with `protect-api`), the [`start-client` script](../protect-client/build-context/start-client.sh) will set `V2_API_BASE` appropriately before starting the middleware.
 
 ### Getting the source
 
 ```bash
-$ cd $NS8_SRC
-$ git clone https://github.com/ns8inc/ns8-protect-client
+$ cd $LUDDITES_SRC
+$ git clone https://github.com/luddites-me/luddites-client
 ```
 
 ### Configuration
@@ -36,7 +36,7 @@ See [Composing Services](./overview.md#Composing Services) for a general overvie
 The main service is `protect-client`:
 
 ```bash
-$ cd $NS8_SRC/protect-tools-docker
+$ cd $LUDDITES_SRC/docker-tools
 $ # Start all services/containers in the stack:
 $ ./compose-all.sh up -d
 # Follow the logs from the middleware and webpack dev server:
@@ -49,4 +49,4 @@ The `ngrok` UI for `protect-client` is available at https://localhost:40400.
 
 There's a `vs code` debug configuration in this project that can be used to launch Chrome and attach the debugger.
 
-The webpack dev server should hot reload any changes made to `ns8-protect-client/client`, and `nodemon` should restart the middleware server in case changes are made to `ns8-protect-client/middleware`.
+The webpack dev server should hot reload any changes made to `luddites-client/client`, and `nodemon` should restart the middleware server in case changes are made to `luddites-client/middleware`.

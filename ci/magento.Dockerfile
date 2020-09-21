@@ -4,7 +4,7 @@ FROM php:${PHP_VERSION}-apache
 
 ARG MAGENTO_VERSION
 
-ADD https://ns8-magento-installers.s3.amazonaws.com/Magento-CE-${MAGENTO_VERSION}_sample_data.zip /tmp/magento.zip
+ADD https://luddites-magento-installers.s3.amazonaws.com/Magento-CE-${MAGENTO_VERSION}_sample_data.zip /tmp/magento.zip
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -29,8 +29,8 @@ RUN cd /tmp && \
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     actual_signature="$(php -r "echo hash_file('sha384', 'composer-setup.php');")" && \
     if [ "$expected_signature" != "$actual_signature" ]; then \
-        >&2 echo 'ERROR: Invalid installer signature' && \
-        exit 1; \
+    >&2 echo 'ERROR: Invalid installer signature' && \
+    exit 1; \
     fi && \
     php composer-setup.php --filename=composer --install-dir=/usr/local/bin --quiet
 
@@ -50,17 +50,17 @@ RUN service mysql start && \
     mysqladmin create magento2 && \
     mysql -e "GRANT ALL PRIVILEGES ON magento2.* TO 'magento_db_user'@'localhost' IDENTIFIED BY 'magento_db_password'" && \
     /var/www/html/bin/magento setup:install \
-        --admin-email=dev@ns8demos.com \
-        --admin-firstname=Development \
-        --admin-lastname=Testing \
-        --admin-password=secret1 \
-        --admin-user=development \
-        --backend-frontname=admin_demo \
-        --base-url=http://localhost \
-        --db-host=127.0.0.1 \
-        --db-name=magento2 \
-        --db-password=magento_db_password \
-        --db-user=magento_db_user \
-        --language=en_US \
-        --timezone=America/Los_Angeles && \
+    --admin-email=dev@luddites.me \
+    --admin-firstname=Development \
+    --admin-lastname=Testing \
+    --admin-password=secret1 \
+    --admin-user=development \
+    --backend-frontname=admin_demo \
+    --base-url=http://localhost \
+    --db-host=127.0.0.1 \
+    --db-name=magento2 \
+    --db-password=magento_db_password \
+    --db-user=magento_db_user \
+    --language=en_US \
+    --timezone=America/Los_Angeles && \
     service mysql stop
